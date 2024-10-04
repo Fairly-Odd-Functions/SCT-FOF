@@ -1,13 +1,45 @@
 {% extends "layout.html" %}
-{% block title %}Flask MVC App{% endblock %}
-{% block page %}Flask MVC App{% endblock %}
 
-{{ super() }}
+{% block title %}SCT - Login{% endblock %}
+{% block page %}SCT{% endblock %}
+
+{% block navbar %}{% endblock %}
 
 {% block content %}
-    <h1>Flask MVC</h1>
-    {% if is_authenticated %}
-        <p> Welcome {{current_staff.staffname}} </p>
-    {% endif %}
-    <p>This is a boileplate flask application which follows the MVC pattern for structuring the project.</p>
+    <style>
+        .bg-image {
+            background: url("{{ url_for('static', filename='images/photo.jpg') }}") no-repeat center center;
+            background-size: cover;
+            height: 100vh;
+        }
+    </style>
+    
+    <div class="row" style="height: 100vh;">
+        <!-- Left side for the background image -->
+        <div class="col s12 m6 bg-image">
+            <!-- Background image is set in CSS -->
+        </div>
+        
+        <!-- Right side for the form -->
+        <div class="col s12 m6 valign-wrapper" style="display: flex; align-items: center; justify-content: center;">
+            <div class="login-form-container" style="width: 80%;">
+                <h1>Login</h1>
+                <form action="#" method="POST" id="loginForm">
+                    <div class="input-field">
+                        <label for="staff_email">Staff Email</label>
+                        <input id="staff_email" name="staff_email" type="text" class="validate" required>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="password">Password</label>
+                        <input id="password" name="password" type="password" class="validate" autocomplete="off">
+                    </div>
+
+                    <button class="btn waves-effect waves-light" type="button" id="submitButton" onclick="submitCredentials(event)">
+                        Sign In
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}

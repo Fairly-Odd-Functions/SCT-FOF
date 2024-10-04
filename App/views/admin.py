@@ -1,7 +1,7 @@
 from flask_admin.contrib.sqla import ModelView
 from flask_jwt_extended import jwt_required, current_user, unset_jwt_cookies, set_access_cookies
 from flask_admin import Admin
-from App.models import db, User
+from App.models import db, Staff
 
 class AdminView(ModelView):
 
@@ -14,6 +14,6 @@ class AdminView(ModelView):
         flash("Login to access admin")
         return redirect(url_for('index_page', next=request.url))
 
-def setup_admin(app):
-    admin = Admin(app, name='FlaskMVC', template_mode='bootstrap3')
-    admin.add_view(AdminView(User, db.session))
+# def setup_admin(app):
+#     admin = Admin(app, name='FlaskMVC', template_mode='bootstrap3')
+#     admin.add_view(AdminView(Staff, db.session))
