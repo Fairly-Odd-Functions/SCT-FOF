@@ -17,6 +17,7 @@ def init():
     initialize()
     parse_reviews()
     print('Database Intialized!')
+    print('Test')
 
 '''
 Admin Commands
