@@ -1,55 +1,131 @@
 {% extends "layout.html" %}
-{% block title %}App staffs{% endblock %}
-{% block page %}App staffs{% endblock %}
 
-{{ super() }}
+{% block title %}{{ student.firstname }} {{ student.lastname }} | Profile{% endblock %}
+{% block page %}{{ student.firstname }} {{ student.lastname }} | Profile{% endblock %}
+
+{% block navbar %}
+  <nav class="purple">
+    <div class="nav-wrapper">
+      <ul id="nav-mobile" class="left">
+        <li>
+          <a href="#" style="font-size:1.5em" class="brand-logo left">
+            Logged in As: {{ staff.prefix }} {{ staff.firstname }} {{ staff.lastname }}
+          </a>
+        </li>
+      </ul>
+      <ul id="nav-mobile" class="right">
+        <li><a href="/logout" style="font-size:1.5em">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+{% endblock %}
 
 {% block content %}
-    <div class="row">
-        <p>
-            This is table is renderd on the Server. Flask gets the data from the database and uses jinja templates to dyanmically render this page when a request is sent to <a href="/staffs">/staffs</a>.
-        </p>
-    </div>
+<style>
+  #review_card {
+    border-radius: 10px;
+    width: 300px;
+    margin: 0 auto;
+}
+</style>
 
-    <div class="row">
-      <form class="col s12" method="POST" action="/staffs">
-        
-        <div class="row">
-          <div class="input-field col s6">
-            <input placeholder="staffname" name="staffname" type="text" class="validate">
-            <label for="staffname">staffname</label>
-          </div>
-          <div class="input-field col s6">
-            <input placeholder="password" name="password" type="password" class="validate">
-            <label for="password">Password</label>
-          </div>
+<div id="search" class="overlay" style="text-align: center;">
+  <div class="popup">
+    <span class="popup-title">Search Student</span>
+    <div class="content">
+      <form action="/student_record" method="GET">
+        <input type="number" id="student-id" name="student_id" placeholder="Student ID - e.g. 816031000" required 
+        style="border: none; border-bottom: 2px solid #ccc; width: 80%; padding: 5px; outline: none;">
+        <div style="margin-top: 20px; display: flex; justify-content: space-between; width: 80%; margin-left: 10%;">
+            <button type="button" class="btn waves-effect waves-light" style="border-radius: 10px;" onclick="closePopup()">Cancel</button>
+            <button type="submit" class="btn waves-effect waves-light" style="border-radius: 10px;">Search</button>
         </div>
-      
-        <div class="row">
-          <div class="input-field col s12">
-            <button class="btn waves-effect waves-light right purple" type="submit" name="action">Submit</button>
-          </div>
-        </div> 
-
       </form>
     </div>
+  </div>
+</div>
 
-    <div class="row">
-      <table>
-        <thead>
-          <tr>
-            <th>Id</th><th>staffname</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for staff in staffs %}
-            <tr>
-                <td>{{staff.id}}</td>
-                <td>{{staff.staffname}}</td>
-            </tr>
-          {% endfor %}
-        <tbody>
-      </table>
+<!-- Profile Information -->
+<div class="container">
+    <div class="row" style="display: flex; align-items: center; padding-top: 20px;">
+        <!-- Left Side: Reviews Count -->
+        <div class="col s4">
+            <div class="card" style="height: 100%; display: flex; align-items: center; justify-content: center; border-radius: 20px;">
+                <div class="card-content center-align">
+                    <span class="card-title" style="font-size: 16px;">Reviews Count</span>
+                    <p  style="font-size: 30px;">{{ reviews_count }}</p>
+                </div>
+            </div>
+            <div style="height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+              <span>
+                  <b>Average Rating:</b> {{ avg_rating }}
+                  <br>
+                  <div style="display: flex; justify-content: center; padding-top: 10px;">
+                      {% for i in range(5) %}
+                          {% if i < avg_rating %}
+                              <i class="fas fa-star"></i>
+                          {% else %}
+                              <i class="far fa-star"></i>
+                          {% endif %}
+                      {% endfor %}
+                  </div>
+              </span>
+          </div>          
+        </div>
+
+        <!-- Middle: Profile Picture and Full Name -->
+        <div class="col s4 center-align">
+            <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="profile pic" class="circle responsive-img" style="width: 150px; height: 150px;">
+            <h5 style="white-space: nowrap;">{{ student.firstname }} {{ student.lastname }}</h5>
+              <span>{{ student.student_id }}</span>
+        </div>
+
+        <!-- Right Side: Buttons -->
+        <div class="col s4" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+          <a class="btn waves-effect waves-light" href="#" style="margin-bottom: 20px; border-radius: 10px;">List All Reviews</a>
+          <a class="btn waves-effect waves-light" href="#search" style="margin-bottom: 20px; border-radius: 10px;">Search Student</a>
+          <a class="btn waves-effect waves-light" href="#" style="border-radius: 10px;">Review Student</a>
+      </div>
+      
     </div>
+</div>
 
+<hr>
+
+<!-- Latest Reviews -->
+<div class="container">
+    <h5 class="center-align">Latest Reviews</h5>
+
+    <!-- Cards for Latest Reviews -->
+    <div class="row" id="reviews-container" style="padding-top: 30px;">
+      {% for review in student_reviews %}
+          {% if loop.index <= 2 %}
+              <div class="col s6">
+                  <div class="card" id="review_card" style="border-radius: 10px">
+                      <div class="card-content">
+                        <p>{{ review.text }}</p>
+                        <br>
+                        <span>Rating:
+                          {% for i in range(5) %}
+                              {% if i < review.rating %}
+                                  <i class="fas fa-star"></i>
+                              {% else %}
+                                  <i class="far fa-star"></i>
+                              {% endif %}
+                          {% endfor %}
+                        </span>
+                        <hr>
+                        <span class="card-title" style="font-size: 16px;"><b>Written By:</b> {{ review.reviewer.prefix }} {{ review.reviewer.firstname }} {{ review.reviewer.lastname }}</span>
+                      </div>
+                  </div>
+              </div>
+          {% endif %}
+      {% endfor %}
+  </div>
+</div>
+<script>
+  function closePopup() {
+    window.location.hash = '';
+  }
+</script>
 {% endblock %}

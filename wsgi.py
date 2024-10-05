@@ -16,8 +16,8 @@ migrate = get_migrate(app)
 def init():
     initialize()
     parse_reviews()
+    parse_students("students.csv")
     print('Database Intialized!')
-    print('Test')
 
 '''
 Admin Commands

@@ -6,6 +6,10 @@ from App.database import db
 def create_staff(prefix, firstname, lastname, email, is_admin, password, created_by_id):
     created_by = get_staff(created_by_id)
 
+    existing_staff = get_staff_by_email(email)
+    if existing_staff is not None:
+        return None
+
     if created_by and created_by.is_admin:
         newstaff = Staff(prefix=prefix,
                         firstname=firstname,
@@ -35,6 +39,9 @@ def create_staff(prefix, firstname, lastname, email, is_admin, password, created
 
 def get_staff(id):
     return Staff.query.get(id)
+
+def get_staff_by_email(email):
+    return Staff.query.filter_by(email=email)
 
 def get_all_staffs():
     return Staff.query.all()
