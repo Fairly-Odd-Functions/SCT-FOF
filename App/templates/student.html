@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block title %}App staffs{% endblock %}
+{% block page %}App staffs{% endblock %}
+
+{{ super() }}
+
+{% block content %}
+    <div class="row">
+        <p>
+            This is table is renderd on the Server. Flask gets the data from the database and uses jinja templates to dyanmically render this page when a request is sent to <a href="/staffs">/staffs</a>.
+        </p>
+    </div>
+
+    <div class="row">
+      <form class="col s12" method="POST" action="/staffs">
+        
+        <div class="row">
+          <div class="input-field col s6">
+            <input placeholder="staffname" name="staffname" type="text" class="validate">
+            <label for="staffname">staffname</label>
+          </div>
+          <div class="input-field col s6">
+            <input placeholder="password" name="password" type="password" class="validate">
+            <label for="password">Password</label>
+          </div>
+        </div>
+      
+        <div class="row">
+          <div class="input-field col s12">
+            <button class="btn waves-effect waves-light right purple" type="submit" name="action">Submit</button>
+          </div>
+        </div> 
+
+      </form>
+    </div>
+
+    <div class="row">
+      <table>
+        <thead>
+          <tr>
+            <th>Id</th><th>staffname</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for staff in staffs %}
+            <tr>
+                <td>{{staff.id}}</td>
+                <td>{{staff.staffname}}</td>
+            </tr>
+          {% endfor %}
+        <tbody>
+      </table>
+    </div>
+
+{% endblock %}

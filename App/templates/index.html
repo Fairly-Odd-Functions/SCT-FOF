@@ -3,43 +3,63 @@
 {% block title %}SCT - Login{% endblock %}
 {% block page %}SCT{% endblock %}
 
+{{ super() }}
 {% block navbar %}{% endblock %}
 
 {% block content %}
     <style>
         .bg-image {
-            background: url("{{ url_for('static', filename='images/photo.jpg') }}") no-repeat center center;
+            background: url("{{ url_for('static', filename='images/photo.jpg') }}") no-repeat center center fixed; 
             background-size: cover;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+         .login-container {
             height: 100vh;
+            width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.8);
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+
+        .input-field label {
+            color: black;
+        }
+
+        .btn {
+            color: white;
         }
     </style>
     
-    <div class="row" style="height: 100vh;">
-        <!-- Left side for the background image -->
-        <div class="col s12 m6 bg-image">
-            <!-- Background image is set in CSS -->
-        </div>
-        
-        <!-- Right side for the form -->
-        <div class="col s12 m6 valign-wrapper" style="display: flex; align-items: center; justify-content: center;">
-            <div class="login-form-container" style="width: 80%;">
-                <h1>Login</h1>
-                <form action="#" method="POST" id="loginForm">
-                    <div class="input-field">
-                        <label for="staff_email">Staff Email</label>
-                        <input id="staff_email" name="staff_email" type="text" class="validate" required>
-                    </div>
-
-                    <div class="input-field">
-                        <label for="password">Password</label>
-                        <input id="password" name="password" type="password" class="validate" autocomplete="off">
-                    </div>
-
-                    <button class="btn waves-effect waves-light" type="button" id="submitButton" onclick="submitCredentials(event)">
-                        Sign In
-                    </button>
-                </form>
+    <div class="bg-image"></div>
+    
+    <div class="login-container">
+        <h1>Login</h1>
+        <form action="/login" method="POST" id="loginForm" style="width: 80%;">
+            <div class="input-field">
+                <label for="email">Staff Email</label>
+                <input id="email"  value="bob.bobberson@mail.com" name="email" type="email" class="validate" required>
             </div>
-        </div>
+
+            <div class="input-field">
+                <label for="password">Password</label>
+                <input id="password"  value="bobpass" name="password" type="password" class="validate" autocomplete="off">
+            </div>
+
+            <button type="submit" class="btn waves-effect waves-light">Login</button>
+        </form>
     </div>
 {% endblock %}

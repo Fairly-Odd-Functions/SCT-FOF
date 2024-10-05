@@ -14,6 +14,6 @@ class AdminView(ModelView):
         flash("Login to access admin")
         return redirect(url_for('index_page', next=request.url))
 
-# def setup_admin(app):
-#     admin = Admin(app, name='FlaskMVC', template_mode='bootstrap3')
-#     admin.add_view(AdminView(Staff, db.session))
+def setup_admin(app):
+    admin = Admin(app, name='FlaskMVC', template_mode='bootstrap3')
+    admin.add_view(AdminView(Staff, db.session))
