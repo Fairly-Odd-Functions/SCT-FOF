@@ -22,6 +22,19 @@
 }
 </style>
 
+<div id="search" class="overlay" style="text-align: center;">
+  <div class="popup">
+    <span class="popup-title">Search Student</span>
+    <div class="content">
+      <input type="number" id="student-id" placeholder="Student ID - e.g. 816031000" style="margin-top: 20px; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+    </div>
+    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+      <a href="#" class="btn waves-effect waves-light" style="border-radius: 10px;" onclick="closePopup()">Cancel</a>
+      <a href="#" class="btn waves-effect waves-light" style="border-radius: 10px;" onclick="searchStudent()">Search</a>
+    </div>
+  </div>
+</div>
+
 <!-- Profile Information -->
 <div class="container">
     <div class="row" style="display: flex; align-items: center; padding-top: 20px;">
@@ -48,7 +61,7 @@
         <!-- Right Side: Buttons -->
         <div class="col s4" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
           <a class="btn waves-effect waves-light" href="#" style="margin-bottom: 20px; border-radius: 10px;">Add Student</a>
-          <a class="btn waves-effect waves-light" href="#" style="margin-bottom: 20px; border-radius: 10px;">Search Student</a>
+          <a class="btn waves-effect waves-light" href="#search" style="margin-bottom: 20px; border-radius: 10px;">Search Student</a>
           {% if staff.is_admin == True %}
             <a class="btn waves-effect waves-light" href="#" style="border-radius: 10px;">Create Staff</a>
           {% endif %}
@@ -79,4 +92,19 @@
       {% endfor %}
   </div>
 </div>
+
+<script>
+  function searchStudent() {
+    const student_id = document.getElementById('student-id').value;
+    if (student_id) {
+      window.location.href = `/record/${student_id}`;
+    } else {
+      alert("Please Enter A Student ID");
+    }
+  }
+
+  function closePopup() {
+    window.location.hash = '';
+  }
+</script>
 {% endblock %}
