@@ -6,7 +6,7 @@ from.index import index_views
 from App.controllers import (
     create_staff,
     get_all_staffs,
-    # get_reviews,
+    get_reviews,
     get_all_staffs_json,
     jwt_required
 )
@@ -16,9 +16,11 @@ staff_views = Blueprint('staff_views', __name__, template_folder='../templates')
 @staff_views.route('/profile', methods=['GET'])
 @jwt_required()
 def profile():
-    # reviews = get_reviews(jwt_current_user.id)
+    reviews = get_reviews(jwt_current_user.id)
+    reviews_count = len(reviews)
     return render_template('staff.html',
-                        #    staff_reviews = reviews,
+                           staff_reviews=reviews,
+                           reviews_count=reviews_count,
                            staff=jwt_current_user)
 
 @staff_views.route('/staffs', methods=['GET'])

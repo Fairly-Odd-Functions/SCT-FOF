@@ -5,3 +5,4 @@ def initialize():
     db.drop_all()
     db.create_all()
     create_staff('Mr.', 'Bob', 'Bobberson', 'bob.bobberson@mail.com', True, 'bobpass', 0)
+    create_staff('Mr.', 'Bobby', 'Butterbread', 'bobby.butterbread@mail.com', False, 'bobbypass', 0)

@@ -1,4 +1,4 @@
-from App.models import Review
+from App.models import Review, Student
 from App.database import db
 
 def get_reviews(reviewer_id):
