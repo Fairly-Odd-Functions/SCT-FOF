@@ -41,7 +41,7 @@ def get_staff(id):
     return Staff.query.get(id)
 
 def get_staff_by_email(email):
-    return Staff.query.filter_by(email=email)
+    return Staff.query.filter_by(email=email).first()
 
 def get_all_staffs():
     return Staff.query.all()
