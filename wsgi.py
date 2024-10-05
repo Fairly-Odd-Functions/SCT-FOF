@@ -192,11 +192,11 @@ def user_tests_command(type):
     if type == "unitStudent":
         sys.exit(pytest.main(["-k", "StudentUnitTests"]))
     elif type == "int":
-        sys.exit(pytest.main(["-k", "UserIntegrationTests"]))
+        sys.exit(pytest.main(["-k", "studentIntegrationTests"]))
     else:
         sys.exit(pytest.main(["-k", "App"]))
 
-@test.command("review", help="Run Student tests")
+@test.command("review", help="Run Review tests")
 @click.argument("type", default="all")
 def user_tests_command(type):
     

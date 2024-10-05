@@ -12,7 +12,10 @@ from App.controllers import (
     # get_staff_by_staffname,
     update_staff,
     #add student to system
-    add_student
+    add_student,
+    search_student_by_student_id,
+    add_review,
+    get_student_reviews
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -143,10 +146,27 @@ class staffsIntegrationTests(unittest.TestCase):
 class studentIntegrationTests(unittest.TestCase):
     def test_create_student(self):
         Heinz = add_student( 5678987654, "Heinz", "Doofenshmirtz", "DoofenshmirtzEvilEncorporated@email")
-        Perry = add_student ( 1234567890, "Perry", "The Platypus", "HeisPerryPerryThePlatypus@email")
+        Perry = add_student( 1234567890, "Perry", "The Platypus", "HeisPerryPerryThePlatypus@email")
         assert Heinz.student_id == 5678987654
-        assert Perry.studend_id == 1234567890
+        assert Perry.student_id == 1234567890
 
     def test_search_student(self):
-        
+        student = search_student_by_student_id(1234567890)
+        assert student.student_id == 1234567890
+        assert student.firstname == "Perry"
+        assert student.lastname == "The Platypus"
+    
+    def test_student_review(self):
+        Heinz = add_student( 5678987654, "Heinz", "Doofenshmirtz", "DoofenshmirtzEvilEncorporated@email")
+        Perry = add_student( 1234567890, "Perry", "The Platypus", "HeisPerryPerryThePlatypus@email")
+        review = add_review(5678987654, "Guy With A Triangle Pyramid head", 1234567890)
+        assert review.student_id == 5678987654
+        assert review.text == "Guy With A Triangle Pyramid head"
+        assert review.reviewer_id == 1234567890
+
+    #def test_view_student_reviews(self):
+     #   Heinz = add_student( 5678987654, "Heinz", "Doofenshmirtz", "DoofenshmirtzEvilEncorporated@email")
+      #  review = add_review(5678987654, "Guy With A Triangle Pyramid head", 1234567890)
+       # review = add_review(5678987654, "Somehow has self-destruct buttons everywhere", 1122334455)
+
 
