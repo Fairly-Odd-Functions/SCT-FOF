@@ -3,25 +3,9 @@
 {% block title %}{{ staff.firstname }} {{ staff.lastname }} | Profile{% endblock %}
 {% block page %}{{ staff.firstname }} {{ staff.lastname }} | Profile{% endblock %}
 
-{% block navbar %}
-  <nav class="purple">
-    <div class="nav-wrapper">
-      <ul id="nav-mobile" class="right">
-        <li><a href="/logout" style="font-size:1.5em">Logout</a></li>
-      </ul>
-    </div>
-  </nav>
-{% endblock %}
+{{ super() }}
 
 {% block content %}
-<style>
-  #review_card {
-    border-radius: 10px;
-    width: 300px;
-    margin: 0 auto;
-}
-</style>
-
 <div id="add_student" class="overlay" style="text-align: center;">
   <div class="popup" style="margin: 70px auto;">
     <span class="popup-title">Add Student</span>
@@ -131,6 +115,9 @@
                     <p style="font-size: 30px;">{{students_reviewed}}</p>
                 </div>
             </div>
+            <div style="height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
+              <a href="#">See All Reviews</a>
+          </div>
         </div>
 
         <!-- Middle: Profile Picture and Full Name -->
@@ -155,41 +142,36 @@
 </div>
 
 <hr>
-
 <!-- Latest Reviews -->
-<div class="container">
-    <h5 class="center-align">Latest Reviews</h5>
+<div class="container" style="width: 100%; max-width: 1200px; margin: 0 auto;">
+  <h5 class="center-align">Latest Reviews</h5>
 
-    <!-- Cards for Latest Reviews -->
-    <div class="row" id="reviews-container" style="padding-top: 30px;">
-      {% for review in staff_reviews %}
-          {% if loop.index <= 2 %}
-              <div class="col s6">
-                  <div class="card" id="review_card" style="border-radius: 10px">
-                      <div class="card-content">
-                          <span class="card-title" style="font-size: 16px;"><b>{{ review.reviewee.firstname }} {{ review.reviewee.lastname }}</b> - {{ review.student_id }}</span>
-                          <hr>
-                          <p>{{ review.text }}</p>
-                          <br>
-                          <span>Rating:
-                            {% for i in range(5) %}
-                                {% if i < review.rating %}
-                                    <i class="fas fa-star"></i>
-                                {% else %}
-                                    <i class="far fa-star"></i>
-                                {% endif %}
-                            {% endfor %}
-                        </span>
-                      </div>
-                  </div>
+  <!-- Cards for Latest Reviews -->
+  <div id="reviews-container" style="display: flex; overflow-x: scroll; scroll-behavior: smooth;">
+    {% for review in staff_reviews|reverse %}
+      {% if loop.index <= 10 %}
+        <div class="review-card" style="margin: 15px 15px; width: 100%;">
+            <div class="card" id="review_card">
+                <div class="card-content">
+                    <span class="card-title" style="font-size: 16px;">
+                      <b>{{ review.reviewee.firstname }} {{ review.reviewee.lastname }}</b> - {{ review.student_id }}
+                    </span>
+                    <hr>
+                    <p>{{ review.text.split()[:15] | join(' ') }}{% if review.text.split() | length > 15 %}...{% endif %}</p>  <!-- Limit to 15 words -->
+                    <span>Rating:
+                      {% for i in range(5) %}
+                          {% if i < review.rating %}
+                              <i class="fas fa-star"></i>
+                          {% else %}
+                              <i class="far fa-star"></i>
+                          {% endif %}
+                    {% endfor %}
+                  </span>
               </div>
-          {% endif %}
-      {% endfor %}
+          </div>
+      </div>
+      {% endif %}
+    {% endfor %}
   </div>
 </div>
-<script>
-  function closePopup() {
-    window.location.hash = '';
-  }
-</script>
 {% endblock %}

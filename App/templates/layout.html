@@ -16,16 +16,16 @@
     {% block navbar %}
      <nav class="purple">
       <div class="nav-wrapper">
-        <a href="#!" class="brand-logo center">{% block page %}{% endblock %}</a>
+        <span class="brand-logo center" style="font-size: 1.5em;">Student Conduct Tracker</span>
         <ul id="nav-mobile" class="left">
           <li>
-            <a href="#" style="font-size:1.5em" class="brand-logo left">
+            <a href="/profile" style="font-size:1.2em; margin-left: 20px;" class="brand-logo left">
               Logged in As: {{ staff.prefix }} {{ staff.firstname }} {{ staff.lastname }}
             </a>
           </li>
         </ul>
         <ul id="nav-mobile" class="right">
-          <li><a href="/logout" style="font-size:1.5em">Logout</a></li>
+          <li><a href="/logout" style="font-size:1.2em; margin-right: 20px;">Logout</a></li>
         </ul>
       </div>
      </nav>    
@@ -43,6 +43,24 @@
              {% endfor %}
          {% endif %}
        {% endwith %}
+
+        function closePopup() {
+        window.location.hash = '';
+        }
+
+        function filterReviews(rating) {
+        const reviews = document.querySelectorAll('.review-card');
+
+          reviews.forEach(review => {
+            const reviewRating = parseInt(review.getAttribute('data-rating'), 10);
+
+            if (rating === 0 || reviewRating === rating) {
+                review.style.display = 'block';
+            } else {
+                review.style.display = 'none';
+            }
+          });
+        }
    </script>
   </body>
 </html>

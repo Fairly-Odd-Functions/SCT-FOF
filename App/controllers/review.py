@@ -18,4 +18,4 @@ def get_average_rating(student_id):
     total_rating = sum(review.rating for review in reviews)
     average_rating = total_rating / len(reviews)
 
-    return average_rating
+    return round(average_rating)

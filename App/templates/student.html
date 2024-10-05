@@ -3,32 +3,9 @@
 {% block title %}{{ student.firstname }} {{ student.lastname }} | Profile{% endblock %}
 {% block page %}{{ student.firstname }} {{ student.lastname }} | Profile{% endblock %}
 
-{% block navbar %}
-  <nav class="purple">
-    <div class="nav-wrapper">
-      <ul id="nav-mobile" class="left">
-        <li>
-          <a href="#" style="font-size:1.5em" class="brand-logo left">
-            Logged in As: {{ staff.prefix }} {{ staff.firstname }} {{ staff.lastname }}
-          </a>
-        </li>
-      </ul>
-      <ul id="nav-mobile" class="right">
-        <li><a href="/logout" style="font-size:1.5em">Logout</a></li>
-      </ul>
-    </div>
-  </nav>
-{% endblock %}
+{{ super() }}
 
 {% block content %}
-<style>
-  #review_card {
-    border-radius: 10px;
-    width: 300px;
-    margin: 0 auto;
-}
-</style>
-
 <div id="search" class="overlay" style="text-align: center;">
   <div class="popup">
     <span class="popup-title">Search Student</span>
@@ -41,6 +18,51 @@
             <button type="submit" class="btn waves-effect waves-light" style="border-radius: 10px;">Search</button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+
+<div id="review_student" class="overlay" style="text-align: center;">
+  <div class="popup" style="margin: 70px auto;">
+    <span class="popup-title">{{ student.firstname }} {{student.lastname}}</span>
+    <div class="content">
+      <form action="/review_student" method="POST">
+        <label for="review-box">Write a review</label><br>
+        <input type="hidden" value="{{ student.student_id }}" name="student-id">
+        <textarea name="review-text" id="review-box" cols="20" rows="20" style="resize: none;"></textarea>
+        <br>
+        <label for="rating">Rate {{ student.firstname }} {{student.lastname }}</label>
+        <div name="rating">
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="1" required>
+            <span>1 Star</span>
+          </label>
+          
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="2">
+            <span>2 Stars</span>
+          </label>
+          
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="3">
+            <span>3 Stars</span>
+          </label>
+          
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="4">
+            <span>4 Stars</span>
+          </label>
+          
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="5">
+            <span>5 Stars</span>
+          </label>
+        </div>
+        <div style="margin-top: 20px; display: flex; justify-content: space-between; width: 80%; margin-left: 10%;">
+          <a href="#" class="btn waves-effect waves-light" style="border-radius: 10px;" onclick="closePopup()">Cancel</a>
+          <button type="submit" class="btn waves-effect waves-light" style="border-radius: 10px;">Add</button>
+        </div>
+      </form>      
     </div>
   </div>
 </div>
@@ -70,7 +92,7 @@
                       {% endfor %}
                   </div>
               </span>
-          </div>          
+          </div>
         </div>
 
         <!-- Middle: Profile Picture and Full Name -->
@@ -82,50 +104,48 @@
 
         <!-- Right Side: Buttons -->
         <div class="col s4" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-          <a class="btn waves-effect waves-light" href="#" style="margin-bottom: 20px; border-radius: 10px;">List All Reviews</a>
+          <form action="/view_student_reviews" method="GET">
+            <input type="hidden" value="{{ student.student_id }}" name="student-id">
+            <button type="submit" class="btn waves-effect waves-light" style="margin-bottom: 20px; border-radius: 10px;">
+                List All Reviews
+            </button>
+          </form>        
           <a class="btn waves-effect waves-light" href="#search" style="margin-bottom: 20px; border-radius: 10px;">Search Student</a>
-          <a class="btn waves-effect waves-light" href="#" style="border-radius: 10px;">Review Student</a>
+          <a class="btn waves-effect waves-light" href="#review_student" style="border-radius: 10px;">Review Student</a>
       </div>
       
     </div>
 </div>
 
 <hr>
-
 <!-- Latest Reviews -->
-<div class="container">
-    <h5 class="center-align">Latest Reviews</h5>
+<div class="container" style="width: 100%; max-width: 1200px; margin: 0 auto;">
+  <h5 class="center-align">Latest Reviews</h5>
 
-    <!-- Cards for Latest Reviews -->
-    <div class="row" id="reviews-container" style="padding-top: 30px;">
-      {% for review in student_reviews %}
-          {% if loop.index <= 2 %}
-              <div class="col s6">
-                  <div class="card" id="review_card" style="border-radius: 10px">
-                      <div class="card-content">
-                        <p>{{ review.text }}</p>
-                        <br>
-                        <span>Rating:
-                          {% for i in range(5) %}
-                              {% if i < review.rating %}
-                                  <i class="fas fa-star"></i>
-                              {% else %}
-                                  <i class="far fa-star"></i>
-                              {% endif %}
-                          {% endfor %}
-                        </span>
-                        <hr>
-                        <span class="card-title" style="font-size: 16px;"><b>Written By:</b> {{ review.reviewer.prefix }} {{ review.reviewer.firstname }} {{ review.reviewer.lastname }}</span>
-                      </div>
-                  </div>
-              </div>
-          {% endif %}
-      {% endfor %}
+  <!-- Cards for Latest Reviews -->
+  <div id="reviews-container" style="display: flex; overflow-x: scroll; scroll-behavior: smooth;">
+    {% for review in student_reviews|reverse %}
+      {% if loop.index <= 10 %}
+        <div class="review-card" style="margin: 15px 15px; width: 100%;">
+            <div class="card" id="review_card">
+                <div class="card-content">
+                  <p>{{ review.text.split()[:15] | join(' ') }}{% if review.text.split() | length > 15 %}...{% endif %}</p>  <!-- Limit to 15 words -->
+                  <span>Rating:
+                      {% for i in range(5) %}
+                          {% if i < review.rating %}
+                              <i class="fas fa-star"></i>
+                          {% else %}
+                              <i class="far fa-star"></i>
+                          {% endif %}
+                      {% endfor %}
+                      </span>
+                    <hr>
+                  <span class="card-title" style="font-size: 16px;"><b>Written By:</b> {{ review.reviewer.prefix }} {{ review.reviewer.firstname }} {{ review.reviewer.lastname }}</span>
+                </div>
+            </div>
+        </div>
+      {% endif %}
+    {% endfor %}
   </div>
 </div>
-<script>
-  function closePopup() {
-    window.location.hash = '';
-  }
-</script>
 {% endblock %}

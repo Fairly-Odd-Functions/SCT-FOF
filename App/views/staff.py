@@ -6,8 +6,11 @@ from.index import index_views
 from App.controllers import (
     create_staff,
     add_student,
+    add_review,
+    get_student_record,
     get_all_staffs,
     get_staff_reviews,
+    get_student_reviews,
     get_all_staffs_json,
     jwt_required
 )
@@ -75,6 +78,34 @@ def add_staff_account():
     else:
         flash("Staff Account Created Successfully!", "success")
         return redirect(request.referrer)
+
+@staff_views.route('/review_student', methods=['POST'])
+@jwt_required()
+def review_student():
+# text, rating, student_id, reviewer_id
+    data = request.form
+    text = data['review-text']
+    rating = data['rating']
+    student_id = data['student-id']
+    new_review = add_review(
+                    text=text,
+                    rating=rating,
+                    student_id=student_id,
+                    reviewer_id=jwt_current_user.id)
+    flash("Review Added!", "success")
+    return redirect(request.referrer)
+
+@staff_views.route('/view_student_reviews', methods=['GET'])
+@jwt_required()
+def view_student_reviews():
+    student_id = request.args.get('student-id')
+    student = get_student_record(student_id)
+    reviews = get_student_reviews(student_id)
+    return render_template('reviews.html',
+                           student=student,
+                           student_reviews=reviews,
+                           staff=jwt_current_user)
+
 
 @staff_views.route('/staffs', methods=['GET'])
 def get_staff_page():
