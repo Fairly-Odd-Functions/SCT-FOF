@@ -10,7 +10,9 @@ from App.controllers import (
     # login,
     get_staff,
     # get_staff_by_staffname,
-    update_staff
+    update_staff,
+    #add student to system
+    add_student
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -137,3 +139,14 @@ class staffsIntegrationTests(unittest.TestCase):
         update_staff(1, "Ronnie")
         staff = get_staff(1)
         assert staff.firstname == "Ronnie"
+
+class studentIntegrationTests(unittest.TestCase):
+    def test_create_student(self):
+        Heinz = add_student( 5678987654, "Heinz", "Doofenshmirtz", "DoofenshmirtzEvilEncorporated@email")
+        Perry = add_student ( 1234567890, "Perry", "The Platypus", "HeisPerryPerryThePlatypus@email")
+        assert Heinz.student_id == 5678987654
+        assert Perry.studend_id == 1234567890
+
+    def test_search_student(self):
+        
+
