@@ -67,8 +67,8 @@ def add_student (student_id, firstname, lastname, email):
 def search_student_by_student_id(student_id):
     return get_student_record(student_id)
 
-def add_review(student_id, text, reviewer_id):
-    student_review = Review(student_id=student_id, text=text, reviewer_id=reviewer_id)
+def add_review(student_id, text, rating, reviewer_id):
+    student_review = Review(student_id=student_id, text=text, rating=rating, reviewer_id=reviewer_id)
     db.session.add(student_review)
     db.session.commit()
     return student_review

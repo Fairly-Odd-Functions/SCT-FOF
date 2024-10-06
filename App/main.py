@@ -70,7 +70,8 @@ def parse_reviews():
     reader = csv.DictReader(csvfile, delimiter=';')
     for row in reader:
       review = Review(text=row['text'],
+                      rating=int(row['rating']),    #~adjusted for rating feature
                       student_id=row['student_id'],
-                      reviewer_id=row['reviewer_id'])
+                      reviewer_id=row['reviewer_id'])   
       db.session.add(review)
     db.session.commit()

@@ -7,11 +7,12 @@ index_views = Blueprint('index_views', __name__, template_folder='../templates')
 def index_page():
     return render_template('index.html')
 
-@index_views.route('/init', methods=['GET'])
+# POSTMAN METHOD #1 -  CREATE AND INITIALIZE THE DATABASE
+@index_views.route('/init', methods=['POST']) # ~was originally GET chnaged to POST
 def init():
     initialize()
-    return jsonify(message='db initialized!')
+    return jsonify(message='Database initialized!')
 
-@index_views.route('/health', methods=['GET'])
-def health_check():
-    return jsonify({'status':'healthy'})
+# @index_views.route('/health', methods=['GET'])
+# def health_check():
+#     return jsonify({'status':'healthy'})

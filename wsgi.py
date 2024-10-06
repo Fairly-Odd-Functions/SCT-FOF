@@ -111,12 +111,13 @@ def add_students_command(filepath):
     parse_students(filepath)
     print(f"All Students Added From CSV Successfully!")
 
-# REQUIREMENT #2 - REVIEW STUDENT
+# REQUIREMENT #2 - REVIEW STUDENT                  # Edit: ~adjusted for rating feature
 @staff_cli.command("review", help="Adds A Review To A Student")
 @click.argument("student_id", required=False)
 @click.argument("text", nargs=-1, required=False)  # Used nargs=-1 To Accept Multiple Words As A Single Argument :D
+@click.argument("rating", required=False)          
 @click.argument("reviewer_id", required=False)
-def review_student_command(student_id, text, reviewer_id):
+def review_student_command(student_id, text, rating, reviewer_id):
     if student_id is None:
         student_id = input("Enter Student ID To Review: ")
 
@@ -125,10 +126,13 @@ def review_student_command(student_id, text, reviewer_id):
     else:
         text = " ".join(text)
 
+    if not rating:
+        rating = input("Enter Rating 1-5: ")
+
     if reviewer_id is None:
         reviewer_id = input("Input Your Staff ID: ")
 
-    review = add_review(student_id, text, reviewer_id)
+    review = add_review(student_id, text, rating, reviewer_id)
     student = get_student(student_id)
 
     if review and student:
@@ -136,11 +140,15 @@ def review_student_command(student_id, text, reviewer_id):
     else:
         print(f"ERROR: Student With ID {student_id} Does Not Exist.")
 
-# REQUIREMENT #3 - VIEW STUDENT REVIEWS
+# REQUIREMENT #3 - VIEW STUDENT REVIEWS            Edit: ~allowed for input of student_id if not provided within argument
 @staff_cli.command("view_student_reviews", help="List All Reviews For Specified Student")
-@click.argument("student_id")
+@click.argument("student_id", required=False)
 @click.argument("format", default="string")
 def list_review_command(student_id, format):
+
+    if not student_id:
+        student_id = input("Enter Student ID: ")    
+
     reviews = get_student_reviews(student_id)
     if reviews and format == "string":
         print(get_student_reviews(student_id))
@@ -149,10 +157,16 @@ def list_review_command(student_id, format):
     else:
         print(get_student_reviews_json(student_id))
 
-# REQUIREMENT #4 - SEARCH STUDENT
+# REQUIREMENT #4 - SEARCH STUDENT                  Edit: ~allowed for input of student_id while still keeping default value
 @staff_cli.command("search_student", help="Searches For Specific Student")
-@click.argument("student_id", default="816032484")
+@click.argument("student_id", default=None, required=False)
 def search_student_command(student_id):
+
+    if not student_id:
+        student_id = input("Enter Student ID: ")
+    elif student_id is None:
+        student_id = 816032484
+
     if get_student(student_id):
         print(search_student_by_student_id(student_id))
     else:
