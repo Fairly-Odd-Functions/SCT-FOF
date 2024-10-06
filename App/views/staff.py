@@ -101,11 +101,18 @@ def view_student_reviews():
     student_id = request.args.get('student-id')
     student = get_student_record(student_id)
     reviews = get_student_reviews(student_id)
-    return render_template('reviews.html',
+    return render_template('stu_reviews.html',
                            student=student,
                            student_reviews=reviews,
                            staff=jwt_current_user)
 
+@staff_views.route('/view_staff_reviews', methods=['GET'])
+@jwt_required()
+def view_staff_reviews():
+    reviews = get_staff_reviews(jwt_current_user.id)
+    return render_template('sta_reviews.html',
+                           staff_reviews=reviews,
+                           staff=jwt_current_user)
 
 @staff_views.route('/staffs', methods=['GET'])
 def get_staff_page():

@@ -10,7 +10,7 @@ def index_page():
 @index_views.route('/init', methods=['GET'])
 def init():
     initialize()
-    return jsonify(message='db initialized!')
+    return jsonify(message='Database Initialized!')
 
 @index_views.route('/health', methods=['GET'])
 def health_check():

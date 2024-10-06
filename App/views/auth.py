@@ -30,7 +30,8 @@ def login_action():
     token = login(data['email'], data['password'])
     response = redirect(url_for('staff_views.profile'))
     if not token:
-        flash('Bad Email Or Password Given'), 401
+        flash('Bad Email Or Password Given')
+        response = redirect(request.referrer)  
     else:
         flash('Login Successful')
         set_access_cookies(response, token) 
@@ -41,7 +42,7 @@ def logout_action():
     response = redirect(request.referrer) 
     flash("Logged Out!")
     unset_jwt_cookies(response)
-    return render_template('index.html')
+    return redirect(url_for('index_views.index_page'))
 
 '''
 API Routes

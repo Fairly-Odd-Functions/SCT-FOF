@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
-{% block title %}{{ staff.firstname }} {{ staff.lastname }} | Profile{% endblock %}
-{% block page %}{{ staff.firstname }} {{ staff.lastname }} | Profile{% endblock %}
+{% block title %}{{ staff.firstname }} {{ staff.lastname }} | Staff{% endblock %}
+{% block page %}{{ staff.firstname }} {{ staff.lastname }} | Staff{% endblock %}
 
 {{ super() }}
 
@@ -116,7 +116,7 @@
                 </div>
             </div>
             <div style="height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">
-              <a href="#">See All Reviews</a>
+              <a href="/view_staff_reviews">See All Reviews</a>
           </div>
         </div>
 
@@ -146,30 +146,30 @@
 <div class="container" style="width: 100%; max-width: 1200px; margin: 0 auto;">
   <h5 class="center-align">Latest Reviews</h5>
 
-  <!-- Cards for Latest Reviews -->
-  <div id="reviews-container" style="display: flex; overflow-x: scroll; scroll-behavior: smooth;">
+<!-- Cards for Latest Reviews -->
+<div id="reviews-container" style="display: flex; overflow-x: scroll; scroll-behavior: smooth;">
     {% for review in staff_reviews|reverse %}
       {% if loop.index <= 10 %}
         <div class="review-card" style="margin: 15px 15px; width: 100%;">
-            <div class="card" id="review_card">
-                <div class="card-content">
-                    <span class="card-title" style="font-size: 16px;">
-                      <b>{{ review.reviewee.firstname }} {{ review.reviewee.lastname }}</b> - {{ review.student_id }}
-                    </span>
-                    <hr>
-                    <p>{{ review.text.split()[:15] | join(' ') }}{% if review.text.split() | length > 15 %}...{% endif %}</p>  <!-- Limit to 15 words -->
-                    <span>Rating:
-                      {% for i in range(5) %}
-                          {% if i < review.rating %}
-                              <i class="fas fa-star"></i>
-                          {% else %}
-                              <i class="far fa-star"></i>
-                          {% endif %}
-                    {% endfor %}
-                  </span>
-              </div>
+          <div class="card" id="review_card">
+            <div class="card-content">
+              <span class="card-title" style="font-size: 16px;">
+                <b>{{ review.reviewee.firstname }} {{ review.reviewee.lastname }}</b> - {{ review.student_id }}
+              </span>
+              <hr>
+              <p>{{ review.text.split()[:15] | join(' ') }}{% if review.text.split() | length > 15 %}...{% endif %}</p>  <!-- Limit to 15 words -->
+              <span>Rating:
+                {% for i in range(5) %}
+                  {% if i < review.rating %}
+                    <i class="fas fa-star"></i>
+                  {% else %}
+                    <i class="far fa-star"></i>
+                  {% endif %}
+                {% endfor %}
+              </span>
+            </div>
           </div>
-      </div>
+        </div>
       {% endif %}
     {% endfor %}
   </div>
