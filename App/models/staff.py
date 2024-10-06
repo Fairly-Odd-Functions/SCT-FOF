@@ -11,6 +11,7 @@ class Staff(db.Model):
     password = db.Column(db.String(120), nullable=False)
     created_by_id = db.Column(db.Integer, db.ForeignKey('staff.id'), nullable=True)
     created_by = db.relationship('Staff', remote_side=[id], backref='staff_added', lazy=True)
+    reviews = db.relationship('Review', back_populates='reviewer')
 
     def __init__(self, prefix, firstname, lastname, email, is_admin, password, created_by_id):
         self.prefix = prefix

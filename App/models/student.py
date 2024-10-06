@@ -5,7 +5,7 @@ class Student(db.Model):
     firstname = db.Column(db.String, nullable=False)
     lastname = db.Column(db.String, nullable=False)
     email =  db.Column(db.String, nullable=False, unique=True)
-    reviews = db.relationship('Review', backref='student', lazy=True)
+    reviews = db.relationship('Review', back_populates='reviewee')
 
     def __init__(self, student_id, firstname, lastname, email):
         self.student_id = student_id

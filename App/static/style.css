@@ -1,3 +1,65 @@
-html {
+html, body {
+    height: 100%;
+    margin: 0;
     padding: 0;
+    overflow: hidden;
+}
+
+.overlay {
+    z-index: 999;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    transition: opacity 500ms;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+.overlay:target{
+    visibility: visible;
+    opacity: 1;
+}
+
+.popup{
+    z-index: 999;
+    margin: 70px auto;
+    padding: 50px;
+    background: #fff;
+    border-radius: 5px;
+    width: 65%;
+    position: relative;
+}
+
+.popup-title {
+    font-size: 30px;
+  }
+
+#review_card {
+    border-radius: 10px;
+    width: 300px;
+    margin: 0 auto;
+}
+
+#review-box {
+    width: 650px;
+    height: 275px;
+    resize: none;
+  }
+
+.filter-buttons {
+    margin-bottom: 15px;
+}
+.filter-button {
+    margin-right: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    padding: 5px 10px;
+}
+.filter-button:hover {
+    background-color: #ddd;
 }
