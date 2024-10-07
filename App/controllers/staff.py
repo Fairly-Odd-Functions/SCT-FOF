@@ -16,8 +16,8 @@ def create_staff(prefix, firstname, lastname, email, is_admin, password, created
                         lastname=lastname,
                         email=email,
                         is_admin=is_admin,
-                        created_by_id=created_by_id,
-                        password=password)
+                        password=password,
+                        created_by_id=created_by_id)
         db.session.add(newstaff)
         db.session.commit()
         return newstaff

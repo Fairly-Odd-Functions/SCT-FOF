@@ -16,7 +16,7 @@ Page/Action Routes
 '''    
 @auth_views.route('/users', methods=['GET'])
 def get_user_page():
-    users = get_all_users()
+    users = get_all_users() # type: ignore
     return render_template('users.html', users=users)
 
 @auth_views.route('/identify', methods=['GET'])

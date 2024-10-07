@@ -7,71 +7,72 @@
 {% block navbar %}{% endblock %}
 
 {% block content %}
-    <style>
-        .bg-image {
-            background: url("{{ url_for('static', filename='images/photo.jpg') }}") no-repeat center center fixed; 
-            background-size: cover;
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: -1;
-            filter: blur(8px);
-            transform: scale(1.05);
-        }
+<style>
+    .bg-image {
+        background: url("{{ url_for('static', filename='images/photo.jpg') }}") no-repeat center center fixed;
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        filter: blur(8px);
+        transform: scale(1.05);
+    }
 
-         .login-container {
-            height: 100vh;
-            width: 500px;
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            background: rgba(255, 255, 255, 0.8);
-            position: absolute;
-            top: 0;
-            right: 0;
-            z-index: 1;
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.523);
-            padding: 20px;
-        }
+    .login-container {
+        height: 100vh;
+        width: 500px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        background: rgba(255, 255, 255, 0.8);
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 1;
+        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.523);
+        padding: 20px;
+    }
 
-        .title-container {
-            position: absolute;
-            top: 50px;
-            left: 50px;
-            z-index: 1;
-            color: white;
-            font-size: 3em;
-            font-weight: bold;
-            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); 
-        }
-        .input-field label {
-            color: black;
-        }
-    </style>
-    
-    <div class="bg-image"></div>
+    .title-container {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        z-index: 1;
+        color: white;
+        font-size: 3em;
+        font-weight: bold;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    }
 
-    <div class="title-container">
-        Student Conduct Tracker
-    </div>
+    .input-field label {
+        color: black;
+    }
+</style>
 
-    <div class="login-container">
-        <h1>Login</h1>
-        <span style="font-size: 1.2em; padding-bottom: 40px;">Enter Staff Credentials</span>
-        <form action="/login" method="POST" id="loginForm" style="width: 100%;">
-            <div class="input-field">
-                <label for="email">Staff Email</label>
-                <input id="email"  value="bob.bobberson@mail.com" name="email" type="email" class="validate" required>
-            </div>
+<div class="bg-image"></div>
 
-            <div class="input-field">
-                <label for="password">Password</label>
-                <input id="password"  value="bobpass" name="password" type="password" class="validate" autocomplete="off">
-            </div>
+<div class="title-container">
+    Student Conduct Tracker
+</div>
 
-            <button type="submit" class="btn waves-effect waves-light">Login</button>
-        </form>
-    </div>
+<div class="login-container">
+    <h1>Login</h1>
+    <span style="font-size: 1.2em; padding-bottom: 40px;">Enter Staff Credentials</span>
+    <form action="/login" method="POST" id="loginForm" style="width: 100%;">
+        <div class="input-field">
+            <label for="email">Staff Email</label>
+            <input id="email" value="bob.bobberson@mail.com" name="email" type="email" class="validate" required>
+        </div>
+
+        <div class="input-field">
+            <label for="password">Password</label>
+            <input id="password" value="bobpass" name="password" type="password" class="validate" autocomplete="off">
+        </div>
+
+        <button type="submit" class="btn waves-effect waves-light">Login</button>
+    </form>
+</div>
 {% endblock %}
