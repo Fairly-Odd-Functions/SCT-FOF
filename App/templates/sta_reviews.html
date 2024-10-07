@@ -7,14 +7,14 @@
 {% block navbar %}
 <nav class="purple">
  <div class="nav-wrapper">
-   <span class="brand-logo center" style="font-size: 1.5em;">Student Conduct Tracker</span>
+   <span id="nav-title" class="brand-logo center">Student Conduct Tracker</span>
    <ul id="nav-mobile" class="left">
      <li>
-        <a href="/profile" class="back-button" style="font-size:1.2em; margin-right: 20px;"> <i class="fas fa-arrow-left" style="margin-right: 8px; font-size:1.2em;"></i>Back</a>
+        <a href="/profile" class="nav-button"> <i class="fas fa-arrow-left" id="back-icon"></i>Back</a>
      </li>
    </ul>
    <ul id="nav-mobile" class="right">
-     <li><a href="/logout" style="font-size:1.2em; margin-right: 20px;">Logout</a></li>
+     <li><a href="/logout" id="nav-button">Logout</a></li>
    </ul>
  </div>
 </nav>    
@@ -23,15 +23,15 @@
 {% block content %}
 <!-- Information -->
 <div class="container">
-    <div class="row" style="display: flex; align-items: center; padding-top: 20px;">
+    <div class="row flex-row">
         <!-- Middle: Full Name and Label -->
-        <div class="center-align" style="margin: auto;">
-            <h5 style="white-space: nowrap;">{{ staff.firstname }} {{ staff.lastname }}'s Reviews</h5>
+        <div id="review-profile">
+            <h5 id="profile-label">{{ staff.prefix }} {{ staff.firstname }} {{ staff.lastname }}'s Reviews</h5>
         </div>
     </div>
 </div>
 <!-- Latest Reviews -->
-<div class="container" style="width: 100%; max-width: 1200px; margin: 0 auto;">
+<div class="container" id="latest-reviews">
     <div class="filter-buttons">
         <button onclick="filterReviews(0)" class="filter-button">All Reviews</button>
         <button onclick="filterReviews(5)" class="filter-button">5 Stars</button>
@@ -42,12 +42,12 @@
     </div>
     <hr>
     <!-- Cards for Latest Reviews -->
-    <div id="reviews-container" style="display: grid; grid-template-columns: 1fr; gap: 5px; overflow-y: auto; padding-top: 15px; max-height: 425px;">
+    <div class="reviews-container" id="reviews-layout">
         {% for review in staff_reviews|reverse %}
-            <div class="review-card" data-rating="{{ review.rating }}" style="margin: 10px 0;">
-                <div class="card" id="review_card" style="width: 90%;">
+            <div id="all-review-cards" data-rating="{{ review.rating }}">
+                <div class="card" id="all-review-card">
                     <div class="card-content">
-                      <span class="card-title" style="font-size: 16px;">
+                      <span class="card-title">
                         <b>{{ review.reviewee.firstname }} {{ review.reviewee.lastname }}</b> - {{ review.student_id }}
                       </span>
                       <hr>

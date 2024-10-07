@@ -1,6 +1,7 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="utf-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!--Import Google Icon Font-->
@@ -16,17 +17,17 @@
     {% block navbar %}
      <nav class="purple">
       <div class="nav-wrapper">
-        <span class="brand-logo center" style="font-size: 1.5em;">Student Conduct Tracker</span>
+        <span id="nav-title" class="brand-logo center">Student Conduct Tracker</span>
         <ul id="nav-mobile" class="left">
           <li>
-            <a href="/profile" style="font-size:1.2em; margin-left: 20px;" class="brand-logo left">
+            <a href="/profile" class="nav-button" class="brand-logo left">
               <i class="fa fa-house"></i>
               Logged in As: {{ staff.prefix }} {{ staff.firstname }} {{ staff.lastname }}
             </a>
           </li>
         </ul>
         <ul id="nav-mobile" class="right">
-          <li><a href="/logout" style="font-size:1.2em; margin-right: 20px;">Logout</a></li>
+          <li><a href="/logout" class="nav-button">Logout</a></li>
         </ul>
       </div>
      </nav>    
@@ -50,7 +51,7 @@
         }
 
         function filterReviews(rating) {
-        const reviews = document.querySelectorAll('.review-card');
+        const reviews = document.querySelectorAll('#all-review-cards');
 
           reviews.forEach(review => {
             const reviewRating = parseInt(review.getAttribute('data-rating'), 10);
