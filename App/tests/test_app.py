@@ -56,40 +56,29 @@ class StudentUnitTests(unittest.TestCase):
     def test_new_student(self):
         student = Student("815678954", "Bib", "Bibbler", "bibble@email")
         assert student.student_id == "815678954"
-    
-    def test_first_name(self):
-        student = Student("815678954", "Bib", "Bibbler", "bibble@email")
         assert student.firstname == "Bib"
-
-    def test_last_name(self):
-        student = Student("815678954", "Bib", "Bibbler", "bibble@email")
         assert student.lastname == "Bibbler"
-
-    def test_email(self):
-        student = Student("815678954", "Bib", "Bibbler", "bibble@email")
         assert student.email == "bibble@email"
-
     
-    #def test_get_json(self):
-     #   student = Student("815678954", "Bib", "Bibbler", "bibble@email")
-      #  student_json = student.get_json()
-       # self.assertDictEqual(student_json, {"student_id":"815678954", "firstname":"Bib", "lastname":"Bibbler", "email":"bibble@email"})
+    
+    def test_get_json(self):
+        student = Student("815678954", "Bib", "Bibbler", "bibble@email")
+        studentReview = add_review(815678954, "Bob likes math", 1234567890)
+        student_json = student.get_json()
+        #reviews = get_student_reviews(815678954)
+        self.assertDictEqual(student_json, {"student_id":"815678954", "firstname":"Bib", "lastname":"Bibbler", "email":"bibble@email", "reviews": [] } )
 
 class ReviewUnitTests(unittest.TestCase):
     def test_new_review(self):
-        review = Review("Fish to eat", "815678954", "123456789")
-        assert review.student_id == "815678954"
-    
-    def test_review_text(self):
-        review = Review("Fish to eat", "815678954", "123456789")
+        review = Review("Fish to eat", 815678954, 123456789)
+        assert review.student_id == 815678954
         assert review.text == "Fish to eat"
-
     
-    
-    #def test_get_json(self):
-     #   review = Review("Fish to eat", "815678954", "123456789")
-      #  review_json = review.get_json()
-       # self.assertDictEqual(review_json, {"student_id":"815678954", "text":"Fish to eat", "reviewer":"Mr. Johnny Applesauce"})
+    def test_get_json(self):
+        staff = Staff("Mr.", "Johnny", "Applesauce", "johnny.applesauce@mail.com", "Y", "applepass", 0)
+        review = Review("Fish to eat", 815678954, 0)
+        review_json = review.get_json()
+        self.assertDictEqual(review_json, {"student_id":"815678954", "text":"Fish to eat", "reviewer":"Mr. Johnny Applesauce"} )
 
 
 
