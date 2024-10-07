@@ -43,38 +43,46 @@ def empty_db():
 class staffsIntegrationTests(unittest.TestCase):
 
     #INTEGRATION TEST-#1
-    def test_authenticate_staff_valid(self):
-        jhonny = create_staff("Mr.", "Johnny", "Applesauce", "johnny.applesauce@mail.com", False, "johnnypass", 1)
+    def test_01_authenticate_staff_valid(self):
+        newstaff = create_staff("Mr.", "Johnny", "Applesauce", "johnny.applesauce@mail.com", True, "johnnypass", 1)
         response = login("johnny.applesauce@mail.com", "johnnypass")
         assert response is not None
 
     #INTEGRATION TEST-#2
-    def test_authenticate_staff_invalid(self):
+    def test_02_authenticate_staff_invalid(self):
         response = login("johnny.applesauce@mail.com", "wrongpassword")
         assert response is None
 
-    #INTEGRATION TEST-#3 [TO DEBUGG]
-    # def test_create_staff(self):
-
-    #     create_staff('Mr.', 'Bob', 'Bobberson', 'bob.bobberson@mail.com', True, 'bobpass', 0)
-
-    #     newstaff = create_staff("Mr.", "Susan", "Smith", "susan.smith@mail.com", True, "susanpass", 0)
-    #     self.assertEqual(newstaff.firstname, "Susan")
-    #     self.assertEqual(newstaff.lastname, "Smith")
-    #     self.assertEqual(newstaff.email, "susan.smith@mail.com")
-    #     self.assertTrue(newstaff.is_admin)
-    #     self.assertTrue(check_password_hash(newstaff.password, "susanpass"))
-    #     self.assertEqual(newstaff.created_by_id, 0)
+    #INTEGRATION TEST-#3
+    def test_03_create_staff(self):
+        admin_creator = get_staff(1)
+        
+        newstaff = create_staff('Mr', 'John', 'Doe', 'johndoe@example.com', False, 'johnpass', admin_creator.id)
+        self.assertIsNotNone(newstaff)
+        self.assertEqual(newstaff.prefix, 'Mr')
+        self.assertEqual(newstaff.firstname, 'John')
+        self.assertEqual(newstaff.lastname, 'Doe')
+        self.assertEqual(newstaff.email, 'johndoe@example.com')
+        self.assertTrue(check_password_hash(newstaff.password, 'johnpass'))
+        self.assertFalse(newstaff.is_admin)
         
     #INTEGRATION TEST-#4
-    def test_add_student(self):
+    def test_04_add_student(self):
         newstudent = add_student("816012345", "Rick", "Rickson", "rick.rickson@mail.com")
         self.assertEqual(newstudent.firstname, "Rick")
         self.assertEqual(newstudent.lastname, "Rickson")
         self.assertEqual(newstudent.email, "rick.rickson@mail.com")
 
+
     #INTEGRATION TEST-#5
-    def test_view_staff_reviews(self):
+    def test_05_search_student(self):
+        student = get_student(816012345)
+        self.assertEqual(student.firstname, "Rick")
+        self.assertEqual(student.lastname, "Rickson")
+        self.assertEqual(student.email, "rick.rickson@mail.com")
+
+    #INTEGRATION TEST-#6
+    def test_06_view_staff_reviews(self):
         staff = get_staff(1)
         student = get_student(816012345)
 
@@ -87,21 +95,13 @@ class staffsIntegrationTests(unittest.TestCase):
         self.assertEqual(review.rating, 5)
         self.assertEqual(review.reviewer_id, 1)
 
-    #INTEGRATION TEST-#6
-    def test_search_student(self):
-        student = get_student(816012345)
-        self.assertEqual(student.firstname, "Rick")
-        self.assertEqual(student.lastname, "Rickson")
-        self.assertEqual(student.email, "rick.rickson@mail.com")
-
-    # #INTEGRATION TEST-#7 [TO DEBUGG]
-    # def test_get_student_reviews_json(self):
-    #     reviews = get_student_reviews_json(816012345)
-
-    #     self.assertListEqual([{"student_id": 816012345, 
-    #                            "text": "Great student", 
-    #                            "rating": 5, 
-    #                            "reviewer_id": 1}], reviews)
+    # #INTEGRATION TEST-#7
+    def test_07_get_student_reviews_json(self):
+        reviews = get_student_reviews_json(816012345)
+        self.assertListEqual([{"student_id": 816012345, 
+                               "text": "Great student", 
+                               "rating": 5, 
+                               "reviewer": "Mr. Johnny Applesauce"}], reviews)
     
 
     # - - - - - [SIR'S EXAMPLES BELOW]  - - - - - - -
