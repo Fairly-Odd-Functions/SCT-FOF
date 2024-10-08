@@ -14,7 +14,7 @@ from App.controllers import (
     add_review,
     get_student_reviews,
     get_student_reviews_json,
-    append_review
+    append_review,
     add_student,
     get_student,
     add_review,
