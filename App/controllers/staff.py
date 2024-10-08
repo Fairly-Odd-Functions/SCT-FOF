@@ -1,4 +1,4 @@
-from App.controllers.student import get_student, get_student_record
+from App.controllers.student import get_student, get_student_record, check_student_email
 from App.models import Student, Review
 from App.models import Staff
 from App.database import db
@@ -63,7 +63,9 @@ def update_staff(id, firstname):
 
 def add_student (student_id, firstname, lastname, email):
     existing_student = get_student(student_id)
-    if existing_student is not None:
+    get_student_email = check_student_email(email)
+
+    if existing_student or get_student_email is not None:
         return None
     else:
         new_student = Student(student_id, firstname=firstname, lastname=lastname, email=email)

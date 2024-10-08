@@ -22,6 +22,9 @@ def get_student_record_json(student_id):
 def get_student(student_id):
     return Student.query.get(student_id)
 
+def check_student_email(email):
+    return Student.query.filter_by(email=email).first()
+
 def get_student_reviews(student_id):
     student = Student.query.get(student_id)
     if not student:
