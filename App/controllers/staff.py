@@ -80,11 +80,11 @@ def add_review(student_id, text, rating, reviewer_id):
     db.session.commit()
     return student_review
 
-def append_review(student_id, text, reviewer_id):
+def append_review(student_id, text, rating, reviewer_id):
     student = Student.query.get(student_id)
     if not student:
         return
-    review = Review(student_id=student_id, text=text, reviewer_id=reviewer_id)
+    review = Review(student_id=student_id, text=text, rating=rating, reviewer_id=reviewer_id)
     student.reviews.append(review)
     db.session.add(student)
     db.session.commit()

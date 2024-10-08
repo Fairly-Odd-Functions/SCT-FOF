@@ -37,14 +37,14 @@ class StudentUnitTests(unittest.TestCase):
         
     def test_get_json(self):
         student = Student("815678954", "Bib", "Bibbler", "bibble@email")
-        studentReview = add_review(815678954, "Bob likes math", 1234567890)
+        studentReview = add_review(815678954, "Bob likes math", 3, 1234567890)
         student_json = student.get_json()
         #reviews = get_student_reviews(815678954)
         self.assertDictEqual(student_json, {"student_id":"815678954", "firstname":"Bib", "lastname":"Bibbler", "email":"bibble@email", "reviews": [] } )
         
 class ReviewUnitTests(unittest.TestCase):
     def test_new_review(self):
-        review = Review("Good Student", 815678954, 123456789)
+        review = Review("Good Student", 5,  815678954, 123456789)
         assert review.student_id == 815678954
         assert review.text == "Good Student"
     
@@ -132,37 +132,41 @@ class studentIntegrationTests(unittest.TestCase):
     def test_student_review(self):
         Heinz = add_student( 5678987654, "Heinz", "Doofenshmirtz", "DoofenshmirtzEvilEncorporated@email")
         Perry = add_student( 1234567890, "Perry", "The Platypus", "HeisPerryPerryThePlatypus@email")
-        review = add_review(5678987654, "Thinks he is evil", 1234567890)
+        staff = create_staff("Mr.", "Tom", "Sawyer", "tom@email.com", True, "tompass", 0)
+        review = add_review(5678987654, "Thinks he is evil", 1, staff.id)
         assert review.student_id == 5678987654
         assert review.text == "Thinks he is evil"
-        assert review.reviewer_id == 1234567890
+        assert review.rating == 1
+        assert review.reviewer_id == staff.id
 
     def test_view_student_reviews(self):
         staff = create_staff("Mr.", "Henry", "Harvard", "henry.harvard@mail.com", True, "harvardpass", 0)
         Heinz = add_student( 567898764, "Heinz", "Doofenshmirtz", "EvilEncorporated@email")
-        append_review(567898764, "Good at Science", staff.id)
+        append_review(567898764, "Good at Science", 5, staff.id)
         dolly = create_staff("Ms.", "Dolly", "Flynn", "dolly.flynn@mail.com", True, "dollypass", 0)
-        append_review(567898764, "Talks alot about his flashbacks", dolly.id)
+        append_review(567898764, "Talks alot about his flashbacks", 4, dolly.id)
         review_json = get_student_reviews_json(567898764)
         print(review_json)
         self.assertListEqual([{ "student_id": 567898764, 
                                 "text": "Good at Science", 
+                                "rating": 5,
                                 "reviewer": "Mr. Henry Harvard"}, 
                                 
                                 {"student_id" : 567898764, 
-                                "text" : "Talks alot about his flashbacks", 
+                                "text" : "Talks alot about his flashbacks",
+                                "rating" : 4 ,
                                 "reviewer" : "Ms. Dolly Flynn"}], review_json)
     
 class reviewIntegrationTests(unittest.TestCase):
     def test_get_json(self):
         staff = create_staff("Mr.", "Bill", "Applesauce", "bill.applesauce@mail.com", True , "billpass", None)
-        review = add_review(815678954,"Eats during class, very disruptive", staff.id)
+        review = add_review(815678954,"Eats during class, very disruptive", 2,  staff.id)
         review_json = review.get_json()
-        self.assertDictEqual(review_json, {"student_id": 815678954, "text":"Eats during class, very disruptive", "reviewer": "Mr. Bill Applesauce"})
+        self.assertDictEqual(review_json, {"student_id": 815678954, "text":"Eats during class, very disruptive", "rating":2, "reviewer": "Mr. Bill Applesauce"})
 
         student = get_student(816012345)
 
-        add_review(816012345, "Great student", 5, 1)
+        add_review(816012345, "Great student", 5, staff.id)
         assert(len(staff.reviews) == 1)
         
         review = staff.reviews[0]
