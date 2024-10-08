@@ -1,0 +1,151 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ student.firstname }} {{ student.lastname }} | Student{% endblock %}
+{% block page %}{{ student.firstname }} {{ student.lastname }} | Student{% endblock %}
+
+{{ super() }}
+
+{% block content %}
+<div id="search" class="overlay">
+  <div class="popup">
+    <span class="popup-title">Search Student</span>
+    <div class="content">
+      <form action="/student_record" method="GET">
+        <input class="popup-content-input" type="number" id="student-id" name="student_id" placeholder="Student ID - e.g. 816031000" required >
+        <div class="popup-action">
+            <button type="button" class="btn waves-effect waves-light custom-radius" onclick=closePopup()>Cancel</button>
+            <button type="submit" class="btn waves-effect waves-light custom-radius">Search</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="review_student" class="overlay">
+  <div class="popup">
+    <span class="popup-title">{{ student.firstname }} {{student.lastname}}</span>
+    <div class="content">
+      <form action="/review_student" method="POST">
+        <label for="review-box">Write a review</label><br>
+        <input type="hidden" value="{{ student.student_id }}" name="student-id">
+        <textarea name="review-text" id="review-box" cols="20" rows="20"></textarea>
+        <br>
+        <label for="rating">Rate {{ student.firstname }} {{student.lastname }}</label>
+        <div name="rating">
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="1" required>
+            <span>1 Star</span>
+          </label>
+
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="2">
+            <span>2 Stars</span>
+          </label>
+
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="3">
+            <span>3 Stars</span>
+          </label>
+
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="4">
+            <span>4 Stars</span>
+          </label>
+
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="5">
+            <span>5 Stars</span>
+          </label>
+        </div>
+
+        <div class="popup-action">
+          <button type="button" class="btn waves-effect waves-light custom-radius" onclick=closePopup()>Cancel</button>
+          <button type="submit" class="btn waves-effect waves-light custom-radius" >Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Information -->
+<div class="container">
+    <div class="row flex-row">
+        <!-- Left Side: Reviews Count -->
+        <div class="col s4">
+            <div class="card" id="left-flex">
+                <div class="card-content center-align">
+                    <span class="card-title">Reviews Count</span>
+                    <p>{{ reviews_count }}</p>
+                </div>
+            </div>
+            <div id="student-ratings">
+              <span>
+                  <b>Average Rating:</b> {{ avg_rating }}
+                  <br>
+                  <div id="rating-stars">
+                      {% for i in range(5) %}
+                          {% if i < avg_rating %}
+                              <i class="fas fa-star"></i>
+                          {% else %}
+                              <i class="far fa-star"></i>
+                          {% endif %}
+                      {% endfor %}
+                  </div>
+              </span>
+          </div>
+        </div>
+
+        <!-- Middle: Profile Picture and Full Name -->
+        <div class="col s4 center-align">
+            <img id="profile-pic" src="{{ url_for('static', filename='images/profile.jpg') }}" alt="profile pic" class="circle responsive-img">
+            <h5 id="profile-label">{{ student.firstname }} {{ student.lastname }}</h5>
+              <span>{{ student.student_id }}</span>
+        </div>
+
+        <!-- Right Side: Buttons -->
+        <div class="col s4" id="right-flex">
+          <form action="/view_student_reviews" method="GET">
+            <input type="hidden" value="{{ student.student_id }}" name="student-id">
+            <button type="submit" class="btn waves-effect waves-light custom-style">
+                List All Reviews
+            </button>
+          </form>        
+          <a class="btn waves-effect waves-light custom-style" href="#search">Search Student</a>
+          <a class="btn waves-effect waves-light custom-radius" href="#review_student">Review Student</a>
+      </div>
+      
+    </div>
+</div>
+
+<hr>
+<!-- Latest Reviews -->
+<div class="container" id="latest-reviews">
+  <h5 class="center-align">Latest Reviews</h5>
+
+  <!-- Cards for Latest Reviews -->
+  <div class="reviews-container">
+    {% for review in student_reviews|reverse %}
+      {% if loop.index <= 10 %}
+        <div id="review-cards">
+            <div class="card" id="review-card">
+                <div class="card-content">
+                  <p>{{ review.text.split()[:15] | join(' ') }}{% if review.text.split() | length > 15 %}...{% endif %}</p>  <!-- Limit to 15 words -->
+                  <span>Rating:
+                      {% for i in range(5) %}
+                          {% if i < review.rating %}
+                              <i class="fas fa-star"></i>
+                          {% else %}
+                              <i class="far fa-star"></i>
+                          {% endif %}
+                      {% endfor %}
+                      </span>
+                    <hr>
+                  <span class="card-title"><b>Written By:</b> {{ review.reviewer.prefix }} {{ review.reviewer.firstname }} {{ review.reviewer.lastname }}</span>
+                </div>
+            </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -6,6 +6,10 @@ from App.database import db
 def create_staff(prefix, firstname, lastname, email, is_admin, password, created_by_id):
     created_by = get_staff(created_by_id)
 
+    existing_staff = get_staff_by_email(email)
+    if existing_staff is not None:
+        return None
+
     if created_by and created_by.is_admin:
         newstaff = Staff(prefix=prefix,
                         firstname=firstname,
@@ -35,6 +39,9 @@ def create_staff(prefix, firstname, lastname, email, is_admin, password, created
 
 def get_staff(id):
     return Staff.query.get(id)
+
+def get_staff_by_email(email):
+    return Staff.query.filter_by(email=email).first()
 
 def get_all_staffs():
     return Staff.query.all()
@@ -67,8 +74,8 @@ def add_student (student_id, firstname, lastname, email):
 def search_student_by_student_id(student_id):
     return get_student_record(student_id)
 
-def add_review(student_id, text, reviewer_id):
-    student_review = Review(student_id=student_id, text=text, reviewer_id=reviewer_id)
+def add_review(student_id, text, rating, reviewer_id):
+    student_review = Review(student_id=student_id, text=text, rating=rating, reviewer_id=reviewer_id)
     db.session.add(student_review)
     db.session.commit()
     return student_review

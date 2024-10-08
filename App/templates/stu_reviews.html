@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ student.firstname }} {{ student.lastname }} | Reviews{% endblock %}
+{% block page %}{{ student.firstname }} {{ student.lastname }} | Reviews{% endblock %}
+
+{{ super() }}
+{% block navbar %}
+<nav class="purple">
+ <div class="nav-wrapper">
+   <span id="nav-title" class="brand-logo center">Student Conduct Tracker</span>
+   <ul id="nav-mobile" class="left">
+     <li>
+        <a href="/student_record?student_id={{ student.student_id }}" class="nav-button"> <i class="fas fa-arrow-left" id="back-icon"></i>Back</a>
+     </li>
+   </ul>
+   <ul id="nav-mobile" class="right">
+     <li><a href="/logout" class="nav-button">Logout</a></li>
+   </ul>
+ </div>
+</nav>    
+{% endblock %}
+
+{% block content %}
+<div id="review_student" class="overlay">
+  <div class="popup">
+    <span class="popup-title">{{ student.firstname }} {{student.lastname}}</span>
+    <div class="content">
+      <form action="/review_student" method="POST">
+        <label for="review-box">Write a review</label><br>
+        <input type="hidden" value="{{ student.student_id }}" name="student-id">
+        <textarea name="review-text" id="review-box" cols="20" rows="20"></textarea>
+        <br>
+        <label for="rating">Rate {{ student.firstname }} {{student.lastname }}</label>
+        <div name="rating">
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="1" required>
+            <span>1 Star</span>
+          </label>
+          
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="2">
+            <span>2 Stars</span>
+          </label>
+          
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="3">
+            <span>3 Stars</span>
+          </label>
+          
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="4">
+            <span>4 Stars</span>
+          </label>
+          
+          <label>
+            <input type="radio" class="with-gap" name="rating" value="5">
+            <span>5 Stars</span>
+          </label>
+        </div>
+        <div class="popup-action">
+          <button type="button" class="btn waves-effect waves-light custom-radius" onclick=closePopup()>Cancel</button>
+          <button type="submit" class="btn waves-effect waves-light custom-radius" >Add</button>
+        </div>
+      </form>      
+    </div>
+  </div>
+</div>
+
+<!-- Information -->
+<div class="container">
+    <div class="row flex-row">
+        <!-- Middle: Full Name and Label -->
+        <div id="review-profile">
+            <h5 id="profile-label">{{ student.firstname }} {{ student.lastname }}'s Reviews</h5>
+              <span>{{ student.student_id }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Latest Reviews -->
+<div id="latest-reviews" class="container">
+    <div class="filter-buttons">
+        <button onclick="filterReviews(0)" class="filter-button">All Reviews</button>
+        <button onclick="filterReviews(5)" class="filter-button">5 Stars</button>
+        <button onclick="filterReviews(4)" class="filter-button">4 Stars</button>
+        <button onclick="filterReviews(3)" class="filter-button">3 Stars</button>
+        <button onclick="filterReviews(2)" class="filter-button">2 Stars</button>
+        <button onclick="filterReviews(1)" class="filter-button">1 Star</button>
+        <a class="btn waves-effect waves-light right custom-radius" href="#review_student">Review Student</a>
+    </div>
+    <hr>
+    <!-- Cards for Latest Reviews -->
+    <div class="reviews-container" id="reviews-layout">
+        {% for review in student_reviews|reverse %}
+            <div id="all-review-cards" data-rating="{{ review.rating }}">
+                <div class="card" id="all-review-card">
+                    <div class="card-content">
+                        <p>{{ review.text }}</p>
+                        <br>
+                        <span>Rating:
+                            {% for i in range(5) %}
+                                {% if i < review.rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        <hr>
+                        <span class="card-title"><b>Written By:</b> {{ review.reviewer.prefix }} {{ review.reviewer.firstname }} {{ review.reviewer.lastname }}</span>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

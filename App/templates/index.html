@@ -1,13 +1,33 @@
 {% extends "layout.html" %}
-{% block title %}Flask MVC App{% endblock %}
-{% block page %}Flask MVC App{% endblock %}
+
+{% block title %}SCT - Login{% endblock %}
+{% block page %}SCT{% endblock %}
 
 {{ super() }}
+{% block navbar %}{% endblock %}
 
 {% block content %}
-    <h1>Flask MVC</h1>
-    {% if is_authenticated %}
-        <p> Welcome {{current_staff.staffname}} </p>
-    {% endif %}
-    <p>This is a boileplate flask application which follows the MVC pattern for structuring the project.</p>
+    <div class="bg-image"></div>
+
+    <div class="title-container">
+        Student Conduct Tracker
+    </div>
+
+    <div class="login-container">
+        <h1>Login</h1>
+        <span>Enter Staff Credentials</span>
+        <form action="/login" method="POST" id="loginForm">
+            <div class="input-field">
+                <label for="email">Staff Email</label>
+                <input id="email"  value="bob.bobberson@mail.com" name="email" type="email" class="validate" required>
+            </div>
+
+            <div class="input-field">
+                <label for="password">Password</label>
+                <input id="password"  value="bobpass" name="password" type="password" class="validate" autocomplete="off">
+            </div>
+
+            <button type="submit" class="btn waves-effect waves-light">Login</button>
+        </form>
+    </div>
 {% endblock %}

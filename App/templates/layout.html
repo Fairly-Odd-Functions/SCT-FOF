@@ -1,70 +1,68 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
-  
+    <meta charset="utf-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-     <!--Import Google Icon Font-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!--Import Google Icon Font-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>{% block title %}{% endblock %}</title>
-
   </head>
   <body>
-    
-      <nav class="purple">
-          <div class="nav-wrapper">
-              <a href="#!" class="brand-logo center">{% block page %}{% endblock %}</a>
-              <ul id="nav-mobile" class="left">
-                  <li><a href="/">Home</a></li>
-                  <li><a href="/staffs">staffs Jinja</a></li>
-                  {% if is_authenticated %}
-                    <li><a href="/identify">Identify</a></li>
-                  {% endif %}
-                  <li><a href="/static/staffs">staffs JS</a></li>
-              </ul>
-              {% if is_authenticated %}
-              <ul id="nav-mobile" class="right">
-                <li><a href="/logout">Logout</a></li>
-              </ul>
-              {% else %}
-              <form class="right navbar-form" method="POST" action="/login" style="display: flex; flex-wrap: nowrap; align-items: center; margin-right: 10px;">
-                  <div class="input-field" style="margin-right: 10px;">
-                      <input placeholder="staffname" value="bob" name="staffname" type="text" class="validate" required>
-                      <label for="staffname">staffname</label>
-                  </div>
-                  <div class="input-field" style="margin-right: 10px;">
-                      <input placeholder="password"value="bobpass" name="password" type="password" class="validate" required>
-                      <label for="password">Password</label>
-                  </div>
-                  <button type="submit" class="btn waves-effect waves-light">Login</button>
-              </form>
-              {% endif %}
-              
-          </div>
-      </nav>
-      <style>
-          .navbar-form label {
-              color: white !important;
-          }
-      </style>
+
+    {% block navbar %}
+     <nav class="purple">
+      <div class="nav-wrapper">
+        <span id="nav-title" class="brand-logo center">Student Conduct Tracker</span>
+        <ul id="nav-mobile" class="left">
+          <li>
+            <a href="/profile" class="nav-button" class="brand-logo left">
+              <i class="fa fa-house"></i>
+              Logged in As: {{ staff.prefix }} {{ staff.firstname }} {{ staff.lastname }}
+            </a>
+          </li>
+        </ul>
+        <ul id="nav-mobile" class="right">
+          <li><a href="/logout" class="nav-button">Logout</a></li>
+        </ul>
+      </div>
+     </nav>    
+    {% endblock %}
 
     <div class="container" id="content">{% block content %}{% endblock %}</div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
-       M.AutoInit();
+      M.AutoInit();
+       {% with messages = get_flashed_messages() %}
+         {% if messages %}
+             {% for message in messages %}
+             M.toast({html: '{{message}}'})
+             {% endfor %}
+         {% endif %}
+       {% endwith %}
 
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-              {% for message in messages %}
-              M.toast({html: '{{message}}'})
-              {% endfor %}
-          {% endif %}
-        {% endwith %}
-       
-    </script>
+        function closePopup() {
+        window.location.hash = '';
+        }
+
+        function filterReviews(rating) {
+        const reviews = document.querySelectorAll('#all-review-cards');
+
+          reviews.forEach(review => {
+            const reviewRating = parseInt(review.getAttribute('data-rating'), 10);
+
+            if (rating === 0 || reviewRating === rating) {
+                review.style.display = 'block';
+            } else {
+                review.style.display = 'none';
+            }
+          });
+        }
+   </script>
   </body>
 </html>

@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ staff.firstname }} {{ staff.lastname }} | Reviews{% endblock %}
+{% block page %}{{ staff.firstname }} {{ staff.lastname }} | Reviews{% endblock %}
+
+{{ super() }}
+{% block navbar %}
+<nav class="purple">
+ <div class="nav-wrapper">
+   <span id="nav-title" class="brand-logo center">Student Conduct Tracker</span>
+   <ul id="nav-mobile" class="left">
+     <li>
+        <a href="/profile" class="nav-button"> <i class="fas fa-arrow-left" id="back-icon"></i>Back</a>
+     </li>
+   </ul>
+   <ul id="nav-mobile" class="right">
+     <li><a href="/logout" id="nav-button">Logout</a></li>
+   </ul>
+ </div>
+</nav>    
+{% endblock %}
+
+{% block content %}
+<!-- Information -->
+<div class="container">
+    <div class="row flex-row">
+        <!-- Middle: Full Name and Label -->
+        <div id="review-profile">
+            <h5 id="profile-label">{{ staff.prefix }} {{ staff.firstname }} {{ staff.lastname }}'s Reviews</h5>
+        </div>
+    </div>
+</div>
+<!-- Latest Reviews -->
+<div class="container" id="latest-reviews">
+    <div class="filter-buttons">
+        <button onclick="filterReviews(0)" class="filter-button">All Reviews</button>
+        <button onclick="filterReviews(5)" class="filter-button">5 Stars</button>
+        <button onclick="filterReviews(4)" class="filter-button">4 Stars</button>
+        <button onclick="filterReviews(3)" class="filter-button">3 Stars</button>
+        <button onclick="filterReviews(2)" class="filter-button">2 Stars</button>
+        <button onclick="filterReviews(1)" class="filter-button">1 Star</button>
+    </div>
+    <hr>
+    <!-- Cards for Latest Reviews -->
+    <div class="reviews-container" id="reviews-layout">
+        {% for review in staff_reviews|reverse %}
+            <div id="all-review-cards" data-rating="{{ review.rating }}">
+                <div class="card" id="all-review-card">
+                    <div class="card-content">
+                      <span class="card-title">
+                        <b>{{ review.reviewee.firstname }} {{ review.reviewee.lastname }}</b> - {{ review.student_id }}
+                      </span>
+                      <hr>
+                      <p>{{ review.text }}</p>
+                      <br>
+                      <span>Rating:
+                          {% for i in range(5) %}
+                              {% if i < review.rating %}
+                                  <i class="fas fa-star"></i>
+                              {% else %}
+                                  <i class="far fa-star"></i>
+                              {% endif %}
+                          {% endfor %}
+                      </span>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
