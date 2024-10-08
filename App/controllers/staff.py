@@ -38,7 +38,7 @@ def create_staff(prefix, firstname, lastname, email, is_admin, password, created
         return newstaff
 
 def get_staff(id):
-    return Staff.query.get(id)
+    return Staff.query.filter_by(id=id).first()
 
 def get_staff_by_email(email):
     return Staff.query.filter_by(email=email).first()

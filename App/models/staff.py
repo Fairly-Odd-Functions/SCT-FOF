@@ -9,11 +9,11 @@ class Staff(db.Model):
     email = db.Column(db.String, nullable=False, unique=True)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    created_by_id = db.Column(db.Integer, db.ForeignKey('staff.id'), nullable=True)
+    created_by_id = db.Column(db.Integer, db.ForeignKey('staff.id'), nullable=True, default=None)   # ~Added default feild to suppress the warning message during pytest
     created_by = db.relationship('Staff', remote_side=[id], backref='staff_added', lazy=True)
     reviews = db.relationship('Review', back_populates='reviewer')
 
-    def __init__(self, prefix, firstname, lastname, email, is_admin, password, created_by_id):
+    def __init__(self, prefix, firstname, lastname, email, is_admin, password, created_by_id):        
         self.prefix = prefix
         self.email = email
         self.firstname = firstname
