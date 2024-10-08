@@ -9,7 +9,7 @@ def index():
     return '<h1>Student Conduct Tracker - Fairly Odd Functions</h1>'
 
 """Initialize App"""
-@index_views.route('/init', methods=['POST'])
+@index_views.route('/init', methods=['GET'])
 def init():
     initialize()
     response_data = {"message": "Database Initialized!"}
