@@ -1,18 +1,16 @@
-from flask import Blueprint, redirect, render_template, request, send_from_directory, jsonify
-from App.controllers import create_staff, initialize
+from flask import Blueprint, jsonify
+from App.controllers import initialize
 
 index_views = Blueprint('index_views', __name__, template_folder='../templates')
 
+"""Root"""
 @index_views.route('/', methods=['GET'])
-def index_page():
-    return render_template('index.html')
+def index():
+    return '<h1>Student Conduct Tracker - Fairly Odd Functions</h1>'
 
-# POSTMAN METHOD #1 -  CREATE AND INITIALIZE THE DATABASE
-@index_views.route('/init', methods=['POST']) # ~was originally GET chnaged to POST
+"""Initialize App"""
+@index_views.route('/init', methods=['GET'])
 def init():
     initialize()
-    return jsonify(message='Database initialized!')
-
-# @index_views.route('/health', methods=['GET'])
-# def health_check():
-#     return jsonify({'status':'healthy'})
+    response_data = {"message": "Database Initialized!"}
+    return jsonify(response_data), 200
