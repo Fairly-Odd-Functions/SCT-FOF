@@ -15,7 +15,9 @@ from App.controllers import (
     add_student,
     search_student_by_student_id,
     add_review,
-    get_student_reviews
+    get_student_reviews,
+    get_student_reviews_json,
+    append_review
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -70,19 +72,10 @@ class StudentUnitTests(unittest.TestCase):
 
 class ReviewUnitTests(unittest.TestCase):
     def test_new_review(self):
-        review = Review("Fish to eat", 815678954, 123456789)
+        review = Review("Good Student", 815678954, 123456789)
         assert review.student_id == 815678954
-        assert review.text == "Fish to eat"
+        assert review.text == "Good Student"
     
-    def test_get_json(self):
-        staff = Staff("Mr.", "Johnny", "Applesauce", "johnny.applesauce@mail.com", "Y", "applepass", 0)
-        review = Review("Fish to eat", 815678954, 0)
-        review_json = review.get_json()
-        self.assertDictEqual(review_json, {"student_id":"815678954", "text":"Fish to eat", "reviewer":"Mr. Johnny Applesauce"} )
-
-
-
-
 '''
     Integration Tests
 '''
@@ -148,14 +141,31 @@ class studentIntegrationTests(unittest.TestCase):
     def test_student_review(self):
         Heinz = add_student( 5678987654, "Heinz", "Doofenshmirtz", "DoofenshmirtzEvilEncorporated@email")
         Perry = add_student( 1234567890, "Perry", "The Platypus", "HeisPerryPerryThePlatypus@email")
-        review = add_review(5678987654, "Guy With A Triangle Pyramid head", 1234567890)
+        review = add_review(5678987654, "Thinks he is evil", 1234567890)
         assert review.student_id == 5678987654
-        assert review.text == "Guy With A Triangle Pyramid head"
+        assert review.text == "Thinks he is evil"
         assert review.reviewer_id == 1234567890
 
-    #def test_view_student_reviews(self):
-     #   Heinz = add_student( 5678987654, "Heinz", "Doofenshmirtz", "DoofenshmirtzEvilEncorporated@email")
-      #  review = add_review(5678987654, "Guy With A Triangle Pyramid head", 1234567890)
-       # review = add_review(5678987654, "Somehow has self-destruct buttons everywhere", 1122334455)
-
+    def test_view_student_reviews(self):
+        staff = create_staff("Mr.", "Henry", "Harvard", "henry.harvard@mail.com", True, "harvardpass", 0)
+        Heinz = add_student( 567898764, "Heinz", "Doofenshmirtz", "EvilEncorporated@email")
+        append_review(567898764, "Good at Science", staff.id)
+        dolly = create_staff("Ms.", "Dolly", "Flynn", "dolly.flynn@mail.com", True, "dollypass", 0)
+        append_review(567898764, "Talks alot about his flashbacks", dolly.id)
+        review_json = get_student_reviews_json(567898764)
+        print(review_json)
+        self.assertListEqual([{ "student_id": 567898764, 
+                                "text": "Good at Science", 
+                                "reviewer": "Mr. Henry Harvard"}, 
+                                
+                                {"student_id" : 567898764, 
+                                "text" : "Talks alot about his flashbacks", 
+                                "reviewer" : "Ms. Dolly Flynn"}], review_json)
+    
+class reviewIntegrationTests(unittest.TestCase):
+    def test_get_json(self):
+        staff = create_staff("Mr.", "Bill", "Applesauce", "bill.applesauce@mail.com", True , "billpass", None)
+        review = add_review(815678954,"Eats during class, very disruptive", staff.id)
+        review_json = review.get_json()
+        self.assertDictEqual(review_json, {"student_id": 815678954, "text":"Eats during class, very disruptive", "reviewer": "Mr. Bill Applesauce"})
 

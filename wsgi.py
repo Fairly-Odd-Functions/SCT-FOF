@@ -203,7 +203,7 @@ def user_tests_command(type):
     if type == "unitReview":
         sys.exit(pytest.main(["-k", "ReviewUnitTests"]))
     elif type == "int":
-        sys.exit(pytest.main(["-k", "UserIntegrationTests"]))
+        sys.exit(pytest.main(["-k", "reviewIntegrationTests"]))
     else:
         sys.exit(pytest.main(["-k", "App"]))
 
