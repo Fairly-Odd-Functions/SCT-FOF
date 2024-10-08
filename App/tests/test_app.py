@@ -28,6 +28,8 @@ def empty_db():
    Unit Tests
 '''
 class StudentUnitTests(unittest.TestCase):
+
+    #UNIT TEST-#1
     def test_unit_01_new_student(self):
         student = Student(816000010, "Zuzu", "Pembleton", "zuzu.pembleton@mail.com")
         assert student.student_id == 816000010
@@ -36,7 +38,8 @@ class StudentUnitTests(unittest.TestCase):
         assert student.email == "zuzu.pembleton@mail.com"
 
         assert student is not None
-        
+    
+    #UNIT TEST-#2
     def test_unit_02_new_student_json(self):
         student = Student(816000020, "Finnley", "Fothergill", "finnley.fothergill@mail.com")
         student_json = student.get_json()
@@ -48,15 +51,86 @@ class StudentUnitTests(unittest.TestCase):
                               "reviews": []}, student_json)
     
 
-        
+class StaffUnitTests(unittest.TestCase):
+        #UNIT TEST-#3
+        def test_unit_03_new_staff(self):
 
+            #ENSURUNG A STAFF WITH ADMIN STATUS CAN BE CREATED
+            admin = Staff("Prof.", "Amelia", "Wilson", "amelia.wilson@mail.com", True, "amelia123", None)
+            assert admin.prefix == "Prof."
+            assert admin.firstname == "Amelia"
+            assert admin.lastname == "Wilson"
+            assert admin.email == "amelia.wilson@mail.com"
+            assert admin.is_admin
+            #assert admin.password == generate_password_hash("amelia123")
+            assert admin.created_by_id is None
+
+            #ENSURING A STAFF WITHOUT ADMIN STATUS CAN BE CREATED
+            staff = Staff("Mr.", "James", "Taylor", "james.taylor@mail.com", False, "jamestay", admin.id)
+            assert staff.prefix == "Mr."
+            assert staff.firstname == "James"
+            assert staff.lastname == "Taylor"
+            assert staff.email == "james.taylor@mail.com"
+            assert not staff.is_admin
+            #assert staff.password == generate_password_hash("jamestay")
+            assert staff.created_by_id == admin.id
+
+            assert staff is not None
+        
+        #UNIT TEST-#4
+        def test_unit_04_new_staff_json(self):
+            admin = Staff("Ms.", "Isabella", "Anderson", "isabella.anderson@mail.com", False, "isa_bella", None)
+            staff_json = admin.get_json()
+            
+            self.assertDictEqual({"id": admin.id,
+                                  "prefix": "Ms.",
+                                  "firstname": "Isabella",
+                                  "lastname": "Anderson",
+                                  "email": "isabella.anderson@mail.com",
+                                  "is_admin": False,
+                                  "created_by": None}, staff_json)
+        
+        #UNIT TEST-#5
+        def test_unit_05_set_password(self):
+            password = "bobpass"
+            hashed_password = generate_password_hash(password)
+            admin = Staff("Prof.", "Lucas", "Garcia", "lucas.garcia@mail.com", True, "lucgar", None)
+            assert admin.password != password
+
+        #UNIT TEST-#6
+        def test_unit_06_check_password(self):
+            password = "henrypass"
+            admin = Staff("Mr.", "Henry", "White", "henry.white@mail.com", True, password, None)
+            assert admin.check_password(password)
+            
 
 class ReviewUnitTests(unittest.TestCase):
-    def test_new_review(self):
-        pass
-        # review = Review("Good Student", 5,  815678954, 123456789)
-        # assert review.student_id == 815678954
-        # assert review.text == "Good Student"
+
+    #UNIT TEST-#7
+    def test_unit_07_new_review(self):
+        admin = Staff("Prof.", "Zoe", "Nelson", "zoe.nelson@mail.com", True, "zoenel123", None)
+        student = Student(816000030, "Ethan", "Scott", "ethan.scott@mail.com")
+
+        review = Review("Excellent effort!", 5, 816000030, admin.id)
+        assert review.student_id == 816000030
+        assert review.text == "Excellent effort!"
+        assert review.rating == 5
+
+        assert review is not None
+
+    # #UNIT TEST-#8
+    # def test_unit_08_new_review_json(self):
+    #     admin = Staff("Prof.", "Charlotte", "Harris", "charlotte.harris@mail.com", True, "charlottepass", None)
+    #     student = Student(8816000040, "Noah", "Walker", "noah.walker@mail.com")
+
+    #     review = Review("Consistent work!", 5, 816000040, admin.id)
+    #     review_json = review.get_json()
+    #     expected_reviewer = "Prof. Charlotte Harris" if review.reviewer else None
+
+    #     self.assertDictEqual({"student_id": 816000040,
+    #                         "text": "Consistent work!",
+    #                         "rating": 5,
+    #                         "reviewer": expected_reviewer}, review_json)
     
 
 '''
