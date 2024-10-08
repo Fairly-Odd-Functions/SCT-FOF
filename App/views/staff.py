@@ -1,142 +1,124 @@
-from flask import Blueprint, render_template, jsonify, request, send_from_directory, flash, redirect, url_for
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, current_user as jwt_current_user
-
-from.index import index_views
 
 from App.controllers import (
     create_staff,
+    get_student,
+    get_student_json,
     add_student,
     add_review,
-    get_student_record,
-    get_all_staffs,
-    get_staff_reviews,
-    get_student_reviews,
-    get_all_staffs_json,
+    get_student_reviews_json,
     jwt_required
 )
 
 staff_views = Blueprint('staff_views', __name__, template_folder='../templates')
 
-@staff_views.route('/profile', methods=['GET'])
-@jwt_required()
-def profile():
-    reviews = get_staff_reviews(jwt_current_user.id)
-    students_reviewed = len(reviews)
-    return render_template('staff.html',
-                           staff_reviews=reviews,
-                           students_reviewed=students_reviewed,
-                           staff=jwt_current_user)
-
-@staff_views.route('/add_student', methods=['POST'])
-@jwt_required()
-def add_student_record():
-    data = request.form
-    student_id = data['student_id']
-    student_firstname = data['firstname']
-    student_lastname = data['lastname']
-    student_email = data['email']
-
-    if len(student_id) == 9:
-        new_student = add_student(student_id=student_id, 
-                                firstname=student_firstname, 
-                                lastname=student_lastname,
-                                email=student_email)
-        if new_student is None:
-            flash("A Student That ID Or Email Already Exists!", "error")
-            return redirect(request.referrer)
-        
-        else:
-            flash("Student Added Successfully!", "success")
-            return redirect(request.referrer)
-    else:
-        flash("Invalid Student ID!", "error")
-        return redirect(request.referrer)
-
+"""Create Staff""" # Admin Staff vs Regular Staff
 @staff_views.route('/create_staff', methods=['POST'])
 @jwt_required()
-def add_staff_account():
-    # prefix, firstname, lastname, email, is_admin, password, created_by_id
-    data = request.form
-    staff_prefix = data['prefix']
-    staff_firstname = data['firstname']
-    staff_lastname = data['lastname']
-    staff_email = data['email']
-    is_admin = 'is_admin' in data and data['is_admin'] == 'on'
-    password = data['password']
-    new_staff = create_staff(prefix=staff_prefix,
-                             firstname=staff_firstname,
-                             lastname=staff_lastname,
-                             email=staff_email,
-                             is_admin=is_admin,
-                             password = password,
-                             created_by_id = jwt_current_user.id)
+def create_staff():
+    try:
+        current_staff = jwt_current_user
+        if not current_staff.is_admin:
+            return jsonify(error="Not Authorized To Create Staff Members. Admin Staff Only."), 403
 
-    if new_staff is None:
-        flash("A Staff With That Email Already Exists!", "error")
-        return redirect(request.referrer)
+        data = request.get_json()
+        prefix = data.get('prefix')
+        firstname = data.get('firstname')
+        lastname = data.get('lastname')
+        email = data.get('email')
+        is_admin = data.get('is_admin')
+        password = data.get('password')
+        created_by_id = data.get('created_by_id')
 
-    else:
-        flash("Staff Account Created Successfully!", "success")
-        return redirect(request.referrer)
+        if not firstname or not lastname or not email or password is None:
+            return jsonify(error="All Fields Are Required"), 400
 
-@staff_views.route('/review_student', methods=['POST'])
+        new_staff = create_staff(prefix, firstname, lastname, email, is_admin, password, created_by_id)
+        if new_staff is None:
+            return jsonify(error="Failed To Create Staff Member Or Staff Member Already Exists."), 400
+
+        message=f'Staff: {new_staff.prefix} {new_staff.firstname} {new_staff.lastname} Created By Admin Staff: {current_staff.prefix} {current_staff.firstname} {current_staff.lastname} Successfully!'
+        return jsonify(message=message), 201
+
+    except Exception as e:
+        print(f"Error while creating staff: {e}")
+        return jsonify(error="An error occurred while creating the staff member."), 500
+
+"""Add Student""" # Requirement #1
+@staff_views.route('/add_student', methods=['POST'])
+def add_student():
+    try:
+        data = request.get_json()
+        student_id = data.get('student_id')
+        firstname = data.get('firstname')
+        lastname = data.get('lastname')
+        email = data.get('email')
+
+        if not student_id or not firstname or not lastname or not email:
+            return jsonify(error="All Fields Are Required To Add Student"), 400
+
+        new_student = add_student(student_id, firstname, lastname, email)
+        if new_student is None:
+            return jsonify(error="Failed To Add Student Or Student Already Exists."), 400
+
+        message = f'Student: {new_student.firstname} {new_student.lastname} With Student ID: {new_student.student_id} Added Successfully!'
+        return jsonify(message=message), 201
+
+    except Exception as e:
+        print(f"Error While Adding Student: {e}")
+        return jsonify(error="An Error Occurred While Adding The New Student."), 500
+
+"""Review Student""" # Requirement #2
+@staff_views.route('/review/<int:student_id>', methods=['POST'])
 @jwt_required()
-def review_student():
-# text, rating, student_id, reviewer_id
-    data = request.form
-    text = data['review-text']
-    rating = data['rating']
-    student_id = data['student-id']
-    new_review = add_review(
-                    text=text,
-                    rating=rating,
-                    student_id=student_id,
-                    reviewer_id=jwt_current_user.id)
-    flash("Review Added!", "success")
-    return redirect(request.referrer)
+def review_student(student_id):
+    try:
+        reviewer_id = jwt_current_user.id
 
-@staff_views.route('/view_student_reviews', methods=['GET'])
-@jwt_required()
-def view_student_reviews():
-    student_id = request.args.get('student-id')
-    student = get_student_record(student_id)
-    reviews = get_student_reviews(student_id)
-    return render_template('stu_reviews.html',
-                           student=student,
-                           student_reviews=reviews,
-                           staff=jwt_current_user)
+        data = request.get_json()
+        text = data.get('text')
+        rating = data.get("rating")
 
-@staff_views.route('/view_staff_reviews', methods=['GET'])
-@jwt_required()
-def view_staff_reviews():
-    reviews = get_staff_reviews(jwt_current_user.id)
-    return render_template('sta_reviews.html',
-                           staff_reviews=reviews,
-                           staff=jwt_current_user)
+        if not text or not rating:
+            return jsonify(error="Text And Rating Are Required."), 400
 
-@staff_views.route('/staffs', methods=['GET'])
-def get_staff_page():
-    staffs = get_all_staffs()
-    return render_template('staffs.html', staffs=staffs)
+        new_review = add_review(student_id, text, rating, reviewer_id)
+        if not new_review:
+            return jsonify(error="Failed To Add New Review."), 500
+        
+        message = f'Review Made By {jwt_current_user.prefix} {jwt_current_user.firstname} {jwt_current_user.lastname} Added Successfully To Student With ID: {student_id}'
+        return jsonify(message=message), 201
 
-@staff_views.route('/staffs', methods=['POST'])
-def create_staff_action():
-    data = request.form
-    flash(f"staff {data['staffname']} created!")
-    create_staff(data['staffname'], data['password'])
-    return redirect(url_for('staff_views.get_staff_page'))
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify(error="An Error Occurred While Reviewing The Student."), 500
 
-@staff_views.route('/api/staffs', methods=['GET'])
-def get_staffs_action():
-    staffs = get_all_staffs_json()
-    return jsonify(staffs)
+"""Search Student""" # Requirement #3
+@staff_views.route('/search/<int:student_id>', methods=['GET'])
+def search_student(student_id):
+    try:
+        student = get_student_json(student_id)
+        if not student:
+            return jsonify(error="Student Not Found"), 404
 
-@staff_views.route('/api/staffs', methods=['POST'])
-def create_staff_endpoint():
-    data = request.json
-    staff = create_staff(data['staffname'], data['password'])
-    return jsonify({'message': f"staff {staff.staffname} created with id {staff.id}"})
+        return jsonify(student), 200
 
-@staff_views.route('/static/staffs', methods=['GET'])
-def static_staff_page():
-  return send_from_directory('static', 'static-staff.html')
+    except Exception as e:
+        print(f"Error Searching Student With ID {student_id}: {e}")
+        return jsonify(error=f"An Error Occurred While Searching For Student With ID:{student_id}"), 500
+
+"""View Student Reviews""" # Requirement #4
+@staff_views.route('/list_reviews/<int:student_id>', methods=['GET'])
+def list_student_reviews(student_id):
+    try:
+        student = get_student(student_id)
+        if not student:
+            return jsonify(error=f'Student With ID {student_id} Not Found'), 404
+
+        student_reviews = get_student_reviews_json(student_id)
+        return jsonify(student_reviews), 200 # Extra Support!
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify(error=f"An Error Occurred While Getting Reviews For Student With ID:{student_id}"), 500

@@ -8,7 +8,6 @@ def login(email, password):
     return create_access_token(identity=email)
   return None
 
-
 def setup_jwt(app):
   jwt = JWTManager(app)
 
@@ -24,9 +23,7 @@ def setup_jwt(app):
   def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
     return Staff.query.get(identity)
-
   return jwt
-
 
 # Context processor to make 'is_authenticated' available to all templates
 def add_auth_context(app):

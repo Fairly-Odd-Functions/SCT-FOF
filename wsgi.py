@@ -1,12 +1,19 @@
-import click, pytest, sys # type: ignore
-from flask import Flask # type: ignore
-from flask.cli import with_appcontext, AppGroup # type: ignore
-
+import click, pytest, sys
+from flask import Flask
+from flask.cli import with_appcontext, AppGroup
 from App.database import db, get_migrate
-from App.main import create_app, parse_students
-from App.controllers import ( create_staff, get_all_staffs_json, get_all_staffs, initialize, add_student, search_student_by_student_id, add_review, initialize )
-from App.controllers.student import ( get_all_students_json, get_all_students, get_student, get_student_reviews, get_student_reviews_json )
+from App.main import create_app
 from App.models.staff import Staff
+from App.controllers import (
+    create_staff,
+    initialize,
+    add_student,
+    add_review,
+    get_student,
+    get_student_reviews,
+    get_student_reviews_json
+    )
+
 
 app = create_app()
 migrate = get_migrate(app)
@@ -18,13 +25,13 @@ def init():
     print('Database Intialized!')
 
 '''
-Admin Commands
+Admin Staff Commands
 '''
 
 admin_cli = AppGroup('admin', help='Admin Object Commands') 
 # eg : flask admin <command>
 
-# EXTRA #1 - CREATE STAFF ACCOUNT
+# EXTRA - CREATE STAFF ACCOUNT
 @admin_cli.command("create_staff", help="Creates A Staff Account")
 @click.argument("prefix", required=False)
 @click.argument("firstname", required=False)
@@ -64,17 +71,8 @@ def create_staff_command(prefix, firstname, lastname, email, is_admin_input, pas
 
 app.cli.add_command(admin_cli)
 
-# EXTRA #2 - LIST ALL STAFF ACCOUNTS IN DATABASE 
-@admin_cli.command("list_staff", help="Lists All Staff Account In The Database")
-@click.argument("format", default="string")
-def list_staff_command(format):
-    if format == 'string':
-        print(get_all_staffs())
-    else:
-        print(get_all_staffs_json())
-
 '''
-Staff Commands
+Regular Staff Commands
 '''
 
 staff_cli = AppGroup('staff', help='Admin Object Commands') 
@@ -100,22 +98,14 @@ def add_student_command(student_id, firstname, lastname, email):
         print(f"A Record Has Been Made For Student: {firstname + ' ' + lastname}.")
     else:
         print(f"ERROR: A Student With That ID Already Exists In The Database!")
- 
-# REQUIREMENT #1 EXTENSION - IMPORT CSV OF STUDENTS - For Convenience
-@staff_cli.command("add_students", help="Adds Multiple Students Via CSV")
-@click.argument("filepath", required=False)
-def add_students_command(filepath):
-    if filepath is None:
-        filepath = input("Enter Filepath: ")
-    parse_students(filepath)
-    print(f"All Students Added From CSV Successfully!")
 
 # REQUIREMENT #2 - REVIEW STUDENT
 @staff_cli.command("review", help="Adds A Review To A Student")
 @click.argument("student_id", required=False)
 @click.argument("text", nargs=-1, required=False)  # Used nargs=-1 To Accept Multiple Words As A Single Argument :D
+@click.argument("rating", required=False)
 @click.argument("reviewer_id", required=False)
-def review_student_command(student_id, text, reviewer_id):
+def review_student_command(student_id, text, rating, reviewer_id):
     if student_id is None:
         student_id = input("Enter Student ID To Review: ")
 
@@ -124,10 +114,13 @@ def review_student_command(student_id, text, reviewer_id):
     else:
         text = " ".join(text)
 
+    if rating is None:
+        rating = input("Give A Rating (1-5): ")
+
     if reviewer_id is None:
         reviewer_id = input("Input Your Staff ID: ")
 
-    review = add_review(student_id, text, reviewer_id)
+    review = add_review(student_id, text, rating, reviewer_id)
     student = get_student(student_id)
 
     if review and student:
@@ -150,21 +143,15 @@ def list_review_command(student_id, format):
 
 # REQUIREMENT #4 - SEARCH STUDENT
 @staff_cli.command("search_student", help="Searches For Specific Student")
-@click.argument("student_id", default="816032484")
+@click.argument("student_id", required=False)
 def search_student_command(student_id):
+    if student_id is None:
+        student_id = input("Enter Student ID To Search: ")
+
     if get_student(student_id):
-        print(search_student_by_student_id(student_id))
+        print(get_student(student_id))
     else:
         print(f"ERROR: Student With ID {student_id} Does Not Exist.")
-
-# EXTRA #3 - LIST ALL STUDENTS
-@staff_cli.command("list_students", help="Lists All Student Records In The Database")
-@click.argument("format", default="string")
-def list_staff_command(format):
-    if format == 'string':
-        print(get_all_students())
-    else:
-        print(get_all_students_json())
 
 app.cli.add_command(staff_cli)
 
