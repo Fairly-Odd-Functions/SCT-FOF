@@ -16,7 +16,7 @@ def get_student_record(student_id):
     return student
 
 def get_student_record_json(student_id):
-    student = Student.query.get(student_id)
+    student = Student.query.filter_by(student_id=student_id).first()
     return student.get_json()
 
 def get_student(student_id):
