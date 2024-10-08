@@ -11,29 +11,27 @@ from App.controllers import (
 auth_views = Blueprint('auth_views', __name__, template_folder='../templates')
 
 
-
-
 '''
 Page/Action Routes
 '''    
 @auth_views.route('/users', methods=['GET'])
 def get_user_page():
-    users = get_all_users()
+    users = get_all_users() # type: ignore
     return render_template('users.html', users=users)
 
 @auth_views.route('/identify', methods=['GET'])
 @jwt_required()
 def identify_page():
     return render_template('message.html', title="Identify", message=f"You are logged in as {current_user.id} - {current_user.username}")
-    
 
 @auth_views.route('/login', methods=['POST'])
 def login_action():
     data = request.form
-    token = login(data['username'], data['password'])
-    response = redirect(request.referrer)
+    token = login(data['email'], data['password'])
+    response = redirect(url_for('staff_views.profile'))
     if not token:
-        flash('Bad username or password given'), 401
+        flash('Bad Email Or Password Given')
+        response = redirect(request.referrer)  
     else:
         flash('Login Successful')
         set_access_cookies(response, token) 
@@ -44,7 +42,7 @@ def logout_action():
     response = redirect(request.referrer) 
     flash("Logged Out!")
     unset_jwt_cookies(response)
-    return response
+    return redirect(url_for('index_views.index_page'))
 
 '''
 API Routes
