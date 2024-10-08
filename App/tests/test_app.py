@@ -3,29 +3,51 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from App.main import create_app
 from App.database import db, create_db
-
+from App.views.auth import login
+from App.models import Staff, Student, Review
 from App.controllers import (
     create_staff,
     get_staff,
+    update_staff,
+    add_student,
+    search_student_by_student_id,
+    add_review,
+    get_student_reviews,
+    get_student_reviews_json,
+    append_review
     add_student,
     get_student,
     add_review,
     get_student_reviews_json
 )
 
-from App.models.staff import Staff
-from App.views.auth import login
-
 LOGGER = logging.getLogger(__name__)
-
 
 '''
    Unit Tests
 '''
 
-#[LEFT EMPTY FOR EASE OF MERGING LATER]
-
-
+class StudentUnitTests(unittest.TestCase):
+    def test_new_student(self):
+        student = Student("815678954", "Bib", "Bibbler", "bibble@email")
+        assert student.student_id == "815678954"
+        assert student.firstname == "Bib"
+        assert student.lastname == "Bibbler"
+        assert student.email == "bibble@email"
+        
+    def test_get_json(self):
+        student = Student("815678954", "Bib", "Bibbler", "bibble@email")
+        studentReview = add_review(815678954, "Bob likes math", 1234567890)
+        student_json = student.get_json()
+        #reviews = get_student_reviews(815678954)
+        self.assertDictEqual(student_json, {"student_id":"815678954", "firstname":"Bib", "lastname":"Bibbler", "email":"bibble@email", "reviews": [] } )
+        
+class ReviewUnitTests(unittest.TestCase):
+    def test_new_review(self):
+        review = Review("Good Student", 815678954, 123456789)
+        assert review.student_id == 815678954
+        assert review.text == "Good Student"
+    
 '''
     Integration Tests
 '''
@@ -72,8 +94,7 @@ class staffsIntegrationTests(unittest.TestCase):
         self.assertEqual(newstudent.firstname, "Rick")
         self.assertEqual(newstudent.lastname, "Rickson")
         self.assertEqual(newstudent.email, "rick.rickson@mail.com")
-
-
+      
     #INTEGRATION TEST-#5
     def test_05_search_student(self):
         student = get_student(816012345)
@@ -84,6 +105,61 @@ class staffsIntegrationTests(unittest.TestCase):
     #INTEGRATION TEST-#6
     def test_06_view_staff_reviews(self):
         staff = get_staff(1)
+        assert staff.firstname == "Ronnie"
+    
+        # #INTEGRATION TEST-#7
+    def test_07_get_student_reviews_json(self):
+        reviews = get_student_reviews_json(816012345)
+        self.assertListEqual([{"student_id": 816012345, 
+                               "text": "Great student", 
+                               "rating": 5, 
+                               "reviewer": "Mr. Johnny Applesauce"}], reviews)
+
+class studentIntegrationTests(unittest.TestCase):
+  
+    def test_create_student(self):
+        Heinz = add_student( 5678987654, "Heinz", "Doofenshmirtz", "DoofenshmirtzEvilEncorporated@email")
+        Perry = add_student( 1234567890, "Perry", "The Platypus", "HeisPerryPerryThePlatypus@email")
+        assert Heinz.student_id == 5678987654
+        assert Perry.student_id == 1234567890
+
+    def test_search_student(self):
+        student = search_student_by_student_id(1234567890)
+        assert student.student_id == 1234567890
+        assert student.firstname == "Perry"
+        assert student.lastname == "The Platypus"
+    
+    def test_student_review(self):
+        Heinz = add_student( 5678987654, "Heinz", "Doofenshmirtz", "DoofenshmirtzEvilEncorporated@email")
+        Perry = add_student( 1234567890, "Perry", "The Platypus", "HeisPerryPerryThePlatypus@email")
+        review = add_review(5678987654, "Thinks he is evil", 1234567890)
+        assert review.student_id == 5678987654
+        assert review.text == "Thinks he is evil"
+        assert review.reviewer_id == 1234567890
+
+    def test_view_student_reviews(self):
+        staff = create_staff("Mr.", "Henry", "Harvard", "henry.harvard@mail.com", True, "harvardpass", 0)
+        Heinz = add_student( 567898764, "Heinz", "Doofenshmirtz", "EvilEncorporated@email")
+        append_review(567898764, "Good at Science", staff.id)
+        dolly = create_staff("Ms.", "Dolly", "Flynn", "dolly.flynn@mail.com", True, "dollypass", 0)
+        append_review(567898764, "Talks alot about his flashbacks", dolly.id)
+        review_json = get_student_reviews_json(567898764)
+        print(review_json)
+        self.assertListEqual([{ "student_id": 567898764, 
+                                "text": "Good at Science", 
+                                "reviewer": "Mr. Henry Harvard"}, 
+                                
+                                {"student_id" : 567898764, 
+                                "text" : "Talks alot about his flashbacks", 
+                                "reviewer" : "Ms. Dolly Flynn"}], review_json)
+    
+class reviewIntegrationTests(unittest.TestCase):
+    def test_get_json(self):
+        staff = create_staff("Mr.", "Bill", "Applesauce", "bill.applesauce@mail.com", True , "billpass", None)
+        review = add_review(815678954,"Eats during class, very disruptive", staff.id)
+        review_json = review.get_json()
+        self.assertDictEqual(review_json, {"student_id": 815678954, "text":"Eats during class, very disruptive", "reviewer": "Mr. Bill Applesauce"})
+
         student = get_student(816012345)
 
         add_review(816012345, "Great student", 5, 1)
@@ -94,15 +170,6 @@ class staffsIntegrationTests(unittest.TestCase):
         self.assertEqual(review.text, "Great student")
         self.assertEqual(review.rating, 5)
         self.assertEqual(review.reviewer_id, 1)
-
-    # #INTEGRATION TEST-#7
-    def test_07_get_student_reviews_json(self):
-        reviews = get_student_reviews_json(816012345)
-        self.assertListEqual([{"student_id": 816012345, 
-                               "text": "Great student", 
-                               "rating": 5, 
-                               "reviewer": "Mr. Johnny Applesauce"}], reviews)
-    
 
     # - - - - - [SIR'S EXAMPLES BELOW]  - - - - - - -
     # def test_get_all_staffs_json(self):
