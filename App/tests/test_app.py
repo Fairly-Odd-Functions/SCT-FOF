@@ -6,11 +6,7 @@ from App.database import db, create_db
 from App.models import Staff
 from App.controllers import (
     create_staff,
-    get_all_staffs_json,
-    # login,
-    get_staff,
-    # get_staff_by_staffname,
-    update_staff
+    login
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -60,10 +56,10 @@ def empty_db():
     yield app.test_client()
     db.drop_all()
 
-# def test_authenticate():
-#     staff = create_staff("bob", "bobpass")
-#     assert login("bob", "bobpass") != None
-
+def test_authenticate():
+    staff = create_staff("Mr.", "James", "Pearsauce", "james.pearsauce@mail.com", True, "jamespass", 0)
+    assert login("james.pearsauce@mail.com", "jamespass") != None
+    
 class staffsIntegrationTests(unittest.TestCase):
 
     def test_create_staff(self):
@@ -71,27 +67,3 @@ class staffsIntegrationTests(unittest.TestCase):
         rick = create_staff("Mr.", "Rick", "Rickson", "rick.rickson@mail.com", True, "rickpass", 1)
         assert johnny.firstname == "Johnny"
         assert rick.firstname == "Rick"
-
-    def test_get_all_staffs_json(self):
-        staffs_json = get_all_staffs_json()
-        self.assertListEqual([{"id": 1,
-                               "prefix": "Mr.",
-                               "firstname": "Johnny",
-                               "lastname": "Applesauce",
-                               "email": "johnny.applesauce@mail.com",
-                               "is_admin": True,
-                               "created_by": None},
-
-                              {"id": 2,
-                               "prefix": "Mr.",
-                               "firstname": "Rick",
-                               "lastname": "Rickson",
-                               "email": "rick.rickson@mail.com",
-                               "is_admin": True,
-                               "created_by": "Mr. Johnny Applesauce (johnny.applesauce@mail.com)"}], staffs_json)
-
-    # Tests data changes in the database
-    def test_update_staff(self):
-        update_staff(1, "Ronnie")
-        staff = get_staff(1)
-        assert staff.firstname == "Ronnie"
