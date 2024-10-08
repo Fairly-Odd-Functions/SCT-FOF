@@ -8,8 +8,8 @@ from App.models import Staff, Student, Review
 from App.controllers import (
     create_staff,
     add_student,
-    get_student_record_json,
     add_review,
+    get_student_json,
     get_student_reviews_json
 )
 
@@ -186,7 +186,7 @@ class staffsIntegrationTests(unittest.TestCase):
         new_admin = create_staff("Prof.", "Julian", "Lee", "julian.lee@mail.com", True, "julianpass", None)
         new_student = add_student("816000003","Ethan", "Hall", "ethan.hall@mail.com")
 
-        response = get_student_record_json(816000003)
+        response = get_student_json(816000003)
         self.assertDictEqual({"student_id": 816000003,
                                "firstname": "Ethan", 
                                "lastname": "Hall", 
