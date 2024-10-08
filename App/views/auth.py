@@ -10,7 +10,10 @@ auth_views = Blueprint('auth_views', __name__, template_folder='../templates')
 @auth_views.route('/login', methods=['POST'])
 def login_action():
     try:
-        data = request.form
+        data = request.get_json()
+        if not data or 'email' not in data or 'password' not in data:
+            return jsonify(error='Email And Password Are Required'), 400
+
         token = login(data['email'], data['password'])
         if not token:
             return jsonify(error='Bad Email Or Password Given'), 401
