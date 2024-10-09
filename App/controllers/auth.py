@@ -1,11 +1,10 @@
 from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_jwt_identity, verify_jwt_in_request
-
 from App.models import Staff
 
 def login(email, password):
   staff = Staff.query.filter_by(email=email).first()
   if staff and staff.check_password(password):
-    return create_access_token(identity=email)
+    return create_access_token(identity=staff.id)
   return None
 
 def setup_jwt(app):
@@ -14,7 +13,7 @@ def setup_jwt(app):
   # configure's flask jwt to resolve get_current_identity() to the corresponding staff's ID
   @jwt.user_identity_loader
   def user_identity_lookup(identity):
-    staff = Staff.query.filter_by(email=identity).one_or_none()
+    staff = Staff.query.get(identity)
     if staff:
         return staff.id
     return None
@@ -31,8 +30,8 @@ def add_auth_context(app):
   def inject_user():
       try:
           verify_jwt_in_request()
-          email = get_jwt_identity()
-          current_user = Staff.query.get(email)
+          identity = get_jwt_identity()
+          current_user = Staff.query.get(identity)
           is_authenticated = True
       except Exception as e:
           print(e)

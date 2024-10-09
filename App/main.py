@@ -30,6 +30,8 @@ def create_app(overrides={}):
     init_db(app)
     jwt = setup_jwt(app)
     @jwt.invalid_token_loader
+    def custom_invalid_token_response(error):
+        return jsonify(error="Invalid Token"), 422
     @jwt.unauthorized_loader
     def custom_unauthorized_response(error):
         return jsonify(error="Not Authorized"), 401

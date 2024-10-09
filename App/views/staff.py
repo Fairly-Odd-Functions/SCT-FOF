@@ -16,20 +16,20 @@ staff_views = Blueprint('staff_views', __name__, template_folder='../templates')
 """Create Staff""" # Admin Staff vs Regular Staff
 @staff_views.route('/create_staff', methods=['POST'])
 @jwt_required()
-def create_staff():
+def create_new_staff():
     try:
         current_staff = jwt_current_user
         if not current_staff.is_admin:
             return jsonify(error="Not Authorized To Create Staff Members. Admin Staff Only."), 403
 
-        data = request.get_json()
-        prefix = data.get('prefix')
-        firstname = data.get('firstname')
-        lastname = data.get('lastname')
-        email = data.get('email')
-        is_admin = data.get('is_admin')
-        password = data.get('password')
-        created_by_id = data.get('created_by_id')
+        data = request.json
+        prefix = data['prefix']
+        firstname = data['firstname']
+        lastname = data['lastname']
+        email = data['email']
+        is_admin = data['is_admin']
+        password = data['password']
+        created_by_id = data['created_by_id']
 
         if not firstname or not lastname or not email or password is None:
             return jsonify(error="All Fields Are Required"), 400
@@ -38,12 +38,12 @@ def create_staff():
         if new_staff is None:
             return jsonify(error="Failed To Create Staff Member Or Staff Member Already Exists."), 400
 
-        message=f'Staff: {new_staff.prefix} {new_staff.firstname} {new_staff.lastname} Created By Admin Staff: {current_staff.prefix} {current_staff.firstname} {current_staff.lastname} Successfully!'
+        message=f'New Staff Created By Admin Staff With ID: {current_staff.id}'
         return jsonify(message=message), 201
 
     except Exception as e:
         print(f"Error while creating staff: {e}")
-        return jsonify(error="An error occurred while creating the staff member."), 500
+        return jsonify(error="An Error Occurred While Creating The Staff."), 500
 
 """Add Student""" # Requirement #1
 @staff_views.route('/add_student', methods=['POST'])
