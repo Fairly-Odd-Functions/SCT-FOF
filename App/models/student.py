@@ -1,11 +1,14 @@
 from App.database import db
 
 class Student(db.Model):
+    # Attributes
     student_id = db.Column(db.Integer, primary_key=True)
     firstname = db.Column(db.String, nullable=False)
     lastname = db.Column(db.String, nullable=False)
     email =  db.Column(db.String, nullable=False, unique=True)
-    reviews = db.relationship('Review', back_populates='reviewee')
+
+    # Relationships
+    reviews = db.relationship('Review', back_populates='reviewee', lazy=True)
 
     def __init__(self, student_id, firstname, lastname, email):
         self.student_id = student_id

@@ -2,16 +2,19 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from App.database import db
 
 class Staff(db.Model):
+    # Attributes
     id = db.Column(db.Integer, primary_key=True)
+    created_by_id = db.Column(db.Integer, db.ForeignKey('staff.id'), nullable=True) # ForeignKey
     prefix = db.Column(db.String, nullable=False)
     firstname = db.Column(db.String, nullable=False)
     lastname = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False, unique=True)
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    created_by_id = db.Column(db.Integer, db.ForeignKey('staff.id'), nullable=True)
+
+    # Relationsips
     created_by = db.relationship('Staff', remote_side=[id], backref='staff_added', lazy=True)
-    reviews = db.relationship('Review', back_populates='reviewer')
+    reviews = db.relationship('Review', back_populates='reviewer', lazy=True)
 
     def __init__(self, prefix, firstname, lastname, email, is_admin, password, created_by_id):
         self.prefix = prefix

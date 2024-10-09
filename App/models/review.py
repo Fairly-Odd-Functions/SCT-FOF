@@ -1,11 +1,14 @@
 from App.database import db
 
 class Review(db.Model):
+    # Attributes
     id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.student_id'), nullable=False) # ForeignKey
+    reviewer_id = db.Column(db.Integer, db.ForeignKey('staff.id'), nullable=False) # ForeignKey
     text = db.Column(db.String(120), nullable=False)
     rating = db.Column(db.Integer, nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.student_id'), nullable=False)
-    reviewer_id = db.Column(db.Integer, db.ForeignKey('staff.id'), nullable=False)
+
+    # Relationships
     reviewer = db.relationship('Staff', back_populates='reviews', lazy=True)
     reviewee = db.relationship('Student', back_populates='reviews', lazy=True)
 
