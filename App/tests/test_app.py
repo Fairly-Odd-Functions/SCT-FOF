@@ -18,7 +18,7 @@ from App.controllers import (
 
 LOGGER = logging.getLogger(__name__)
 
-# This fixture creates an empty database for the test and deletes it after the test
+#  fixture creates an empty database for the test and deletes it after the test
 # scope="class" would execute the fixture once and resued for all methods in the class
 @pytest.fixture(autouse=True, scope="module")
 def empty_db():
@@ -120,20 +120,6 @@ class ReviewUnitTests(unittest.TestCase):
         assert review.rating == 5
 
         assert review is not None
-
-    # #UNIT TEST-#8
-    # def test_unit_08_get_review_json(self):
-    #     admin = Staff("Prof.", "Charlotte", "Harris", "charlotte.harris@mail.com", True, "charlottepass", None)
-    #     student = Student(8816000040, "Noah", "Walker", "noah.walker@mail.com")
-
-    #     review = Review("Consistent work!", 5, 816000040, admin.id)
-    #     review_json = review.get_json()
-    #     expected_reviewer = "Prof. Charlotte Harris" if review.reviewer else None
-
-    #     self.assertDictEqual({"student_id": 816000040,
-    #                         "text": "Consistent work!",
-    #                         "rating": 5,
-    #                         "reviewer": expected_reviewer}, review_json)
     
 
 '''
@@ -141,19 +127,19 @@ class ReviewUnitTests(unittest.TestCase):
 '''
 class staffsIntegrationTests(unittest.TestCase):
 
-    #INTEGRATION TEST-#1:   THIS TESTS THE AUTHENTICATION OF STAFF
+    #INTEGRATION TEST-#1:    TESTS THE AUTHENTICATION OF STAFF
     def test_integration_01_authenticate_staff_valid(self):
         new_staff = create_staff("Mr.", "Johnny", "Applesauce", "johnny.applesauce@mail.com", True, "johnnypass", None)
         response = login("johnny.applesauce@mail.com", "johnnypass")
         assert response is not None
 
-    #INTEGRATION TEST-#2    THIS TESTS THE AUTHENTICATION FAILURE OF STAFF
+    #INTEGRATION TEST-#2     TESTS THE AUTHENTICATION FAILURE OF STAFF
     def test_integration_02_authenticate_staff_invalid(self):
         new_staff = create_staff("Dr.", "Emily", "Chen", "emily.chen@mail.com", True, "emilypass", None)
         response = login("emily.chen@mail.com", "wrongpassword")
         assert response is None
 
-    #INTEGRATION TEST-#3    THIS TESTS THE CREATION OF STAFF BY AN ADMIN
+    #INTEGRATION TEST-#3     TESTS THE CREATION OF STAFF BY AN ADMIN
     def test_integration_03_create_staff(self):
         new_admin = create_staff("Ms.", "David", "Lee", "david.lee@mail.com", True, "davidpass", None)
         new_staff = create_staff("Prof.", "Sophia", "Patel", "sophia.patel@mail.com", False, "sophiypass", new_admin.id)
@@ -169,10 +155,7 @@ class staffsIntegrationTests(unittest.TestCase):
         fetched_staff = get_staff(new_staff.id)
         self.assertIsNotNone(fetched_staff)     #should I check for equality in all fields?
         
-
-
-        
-    #INTEGRATION TEST-#4    THIS TEST TESTS THE CREATION/ADDING OF A NEW STUDENT
+    #INTEGRATION TEST-#4     TESTS THE CREATION/ADDING OF A NEW STUDENT
     def test_integration_04_add_student(self):
         new_admin = create_staff("Prof.", "Jackson", "Wang", "jackson.wang@mail.com", True, "jacksonpass", None)
         new_staff = create_staff("Mr.", "Liam", "Kim", "liam.kim@mail.com", False, "liampass", new_admin.id)
@@ -195,8 +178,7 @@ class staffsIntegrationTests(unittest.TestCase):
         self.assertIsNotNone(fetched_student1)
         self.assertIsNotNone(fetched_student2)
 
-
-    #INTEGRATION TEST-#5    THIS TEST TESTS THE SEARCH OF AN ADDED STUDENT
+    #INTEGRATION TEST-#5     TEST TESTS THE SEARCH OF AN ADDED STUDENT
     def test_integration_05_get_student_json(self):
         new_admin = create_staff("Prof.", "Julian", "Lee", "julian.lee@mail.com", True, "julianpass", None)
         new_student = add_student("816000003","Ethan", "Hall", "ethan.hall@mail.com")
@@ -208,7 +190,7 @@ class staffsIntegrationTests(unittest.TestCase):
                                "email": "ethan.hall@mail.com",
                                "reviews": []}, response)
         
-    #INTEGRATION TEST-#6    THIS TEST TESTS THE ADDING OF REVIEW FOR A STUDENT
+    #INTEGRATION TEST-#6     TEST TESTS THE ADDING OF REVIEW FOR A STUDENT
     def test_integration_06_add_student_reviews(self):
         new_admin = create_staff("Ms.", "Sophia", "Taylor", "sophia.taylor@mail.com", True, "sophiapass", None)
         new_staff = create_staff("Mr.", "Oliver", "Martin", "oliver.martin@mail.com", False, "oliverpass", new_admin.id)
@@ -230,7 +212,7 @@ class staffsIntegrationTests(unittest.TestCase):
         self.assertEqual(response2.rating, 1)
         self.assertEqual(response2.reviewer_id, new_staff.id)
 
-    #INTEGRATION TEST-#7    THIS TEST TESTS THE RETRIEVAL OF ALL REVIEWS FOR A STUDENT
+    #INTEGRATION TEST-#7     TEST TESTS THE RETRIEVAL OF ALL REVIEWS FOR A STUDENT
     def test_integration_07_get_student_reviews_json(self):
         new_admin = create_staff("Dr.", "Evelyn", "Hall", "evelyn.hall@mail.com", True, "evelynpass", None)
         new_staff = create_staff("Ms.", "Ava", "Lee", "ava.lee@mail.com", False, "avapass", new_admin.id)
@@ -250,50 +232,24 @@ class staffsIntegrationTests(unittest.TestCase):
                                "rating": 1, 
                                "reviewer": "Ms. Ava Lee"}], reviews)   
 
+    #INTEGRATION TEST-#8     TEST TESTS THE RETRIEVAL OF ALL REVIEWS FOR A STAFF
+    def test_integration_08_get_staff_reviews_json(self):
+        new_admin = create_staff("Dr.", "Eve", "Hall", "eve.hall@mail.com", True, "evepass", None)
+        new_student1 = add_student("816000006", "Juliana", "Brown", "juliana.brown@mail.com")
+        new_student2 = add_student("816000007", "Llyod", "Green", "llyod.green@mail.com")
 
-# - - - - - - - - - - [THIS TEST BELOW IS ALREADY COVERED @TEST_07] - - - - - - - - - - - - - - - -
+        add_review("816000006", "Great student", 5, new_admin.id)
+        add_review("816000007", "Bad student", 1, new_admin.id)
 
-# class reviewIntegrationTests(unittest.TestCase):
-#     def test_get_json(self):
-#         staff = create_staff("Mr.", "Bill", "Applesauce", "bill.applesauce@mail.com", True , "billpass", None)
-#         review = add_review(815678954,"Eats during class, very disruptive", 2,  staff.id)
-#         review_json = review.get_json()
-#         self.assertDictEqual(review_json, {"student_id": 815678954, "text":"Eats during class, very disruptive", "rating":2, "reviewer": "Mr. Bill Applesauce"})
-
-#         student = get_student(816012345)
-
-#         add_review(816012345, "Great student", 5, staff.id)
-#         assert(len(staff.reviews) == 1)
-        
-#         review = staff.reviews[0]
-#         self.assertEqual(review.student_id, 816012345)
-#         self.assertEqual(review.text, "Great student")
-#         self.assertEqual(review.rating, 5)
-#         self.assertEqual(review.reviewer_id, 1) 
-
-
-# - - - - - - - - - - - - - - [SIR'S EXAMPLES BELOW] - - - - - - - - - - - - - - - - - - - - - - -
-
-    # def test_get_all_staffs_json(self):
-    #     staffs_json = get_all_staffs_json()
-    #     self.assertListEqual([{"id": 1,
-    #                            "prefix": "Mr.",
-    #                            "firstname": "Susan",
-    #                            "lastname": "Smith",
-    #                            "email": "susan.smith@mail.com",
-    #                            "is_admin": True,
-    #                            "created_by": None},
-
-    #                           {"id": 2,
-    #                            "prefix": "Mr.",
-    #                            "firstname": "Rick",
-    #                            "lastname": "Rickson",
-    #                            "email": "rick.rickson@mail.com",
-    #                            "is_admin": True,
-    #                            "created_by": "Mr. Johnny Applesauce (johnny.applesauce@mail.com)"}], staffs_json)
-
-    # Tests data changes in the database
-    # def test_update_staff(self):
-    #     update_staff(1, "Ronnie")
-    #     staff = get_staff(1)
-    #     assert staff.firstname == "Ronnie"
+        staff = get_staff(new_admin.id)
+        reviews = staff.reviews
+        reviews = [review.get_json() for review in staff.reviews]
+        self.assertListEqual([{"student_id": 816000006,
+                               "text": "Great student", 
+                               "rating": 5, 
+                               "reviewer": "Dr. Eve Hall"},
+                               
+                               {"student_id": 816000007,
+                                "text": "Bad student", 
+                                "rating": 1, 
+                                "reviewer": "Dr. Eve Hall"}], reviews)
