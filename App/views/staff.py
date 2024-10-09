@@ -38,7 +38,7 @@ def create_new_staff():
         if new_staff is None:
             return jsonify(error="Failed To Create Staff Member Or Staff Member Already Exists."), 400
 
-        message=f'New Staff Created By Admin Staff With ID: {current_staff.id}'
+        message=f'New Staff Created With ID: {new_staff. id} By Admin Staff With ID: {current_staff.id}'
         return jsonify(message=message), 201
 
     except Exception as e:
@@ -47,7 +47,8 @@ def create_new_staff():
 
 """Add Student""" # Requirement #1
 @staff_views.route('/add_student', methods=['POST'])
-def add_student():
+@jwt_required()
+def add_new_student():
     try:
         data = request.get_json()
         student_id = data.get('student_id')
@@ -96,20 +97,21 @@ def review_student(student_id):
 
 """Search Student""" # Requirement #3
 @staff_views.route('/search/<int:student_id>', methods=['GET'])
+@jwt_required()
 def search_student(student_id):
     try:
         student = get_student_json(student_id)
         if not student:
-            return jsonify(error="Student Not Found"), 404
+            return jsonify(error=f'Student With ID: {student_id} Not Found'), 404
 
         return jsonify(student), 200
 
     except Exception as e:
-        print(f"Error Searching Student With ID {student_id}: {e}")
-        return jsonify(error=f"An Error Occurred While Searching For Student With ID:{student_id}"), 500
+        return jsonify(error=f'An Error Occurred While Searching For Student With ID: {student_id}'), 500
 
 """View Student Reviews""" # Requirement #4
 @staff_views.route('/list_reviews/<int:student_id>', methods=['GET'])
+@jwt_required()
 def list_student_reviews(student_id):
     try:
         student = get_student(student_id)
