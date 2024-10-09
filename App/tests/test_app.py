@@ -10,7 +10,10 @@ from App.controllers import (
     add_student,
     add_review,
     get_student_json,
-    get_student_reviews_json
+    get_student_reviews_json,
+    get_staff,
+    get_student,
+    login
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -79,7 +82,7 @@ class StaffUnitTests(unittest.TestCase):
         
         #UNIT TEST-#4
         def test_unit_04_new_staff_json(self):
-            admin = Staff("Ms.", "Isabella", "Anderson", "isabella.anderson@mail.com", False, "isa_bella", None)
+            admin = Staff("Ms.", "Isabella", "Anderson", "isabella.anderson@mail.com", True, "isa_bella", None)
             staff_json = admin.get_json()
             
             self.assertDictEqual({"id": admin.id,
@@ -87,21 +90,21 @@ class StaffUnitTests(unittest.TestCase):
                                   "firstname": "Isabella",
                                   "lastname": "Anderson",
                                   "email": "isabella.anderson@mail.com",
-                                  "is_admin": False,
+                                  "is_admin": True,
                                   "created_by": None}, staff_json)
         
         #UNIT TEST-#5
         def test_unit_05_set_password(self):
-            password = "bobpass"
+            password = "lucaspass"
             hashed_password = generate_password_hash(password)
-            admin = Staff("Prof.", "Lucas", "Garcia", "lucas.garcia@mail.com", True, "lucgar", None)
-            assert admin.password != password
+            staff = Staff("Prof.", "Lucas", "Garcia", "lucas.garcia@mail.com", True, "lucaspass", None)
+            assert staff.password != password
 
         #UNIT TEST-#6
         def test_unit_06_check_password(self):
             password = "henrypass"
-            admin = Staff("Mr.", "Henry", "White", "henry.white@mail.com", True, password, None)
-            assert admin.check_password(password)
+            staff = Staff("Mr.", "Henry", "White", "henry.white@mail.com", True, password, None)
+            assert staff.check_password(password)
             
 
 class ReviewUnitTests(unittest.TestCase):
@@ -119,7 +122,7 @@ class ReviewUnitTests(unittest.TestCase):
         assert review is not None
 
     # #UNIT TEST-#8
-    # def test_unit_08_new_review_json(self):
+    # def test_unit_08_get_review_json(self):
     #     admin = Staff("Prof.", "Charlotte", "Harris", "charlotte.harris@mail.com", True, "charlottepass", None)
     #     student = Student(8816000040, "Noah", "Walker", "noah.walker@mail.com")
 
@@ -153,15 +156,21 @@ class staffsIntegrationTests(unittest.TestCase):
     #INTEGRATION TEST-#3    THIS TESTS THE CREATION OF STAFF BY AN ADMIN
     def test_integration_03_create_staff(self):
         new_admin = create_staff("Ms.", "David", "Lee", "david.lee@mail.com", True, "davidpass", None)
-        newstaff = create_staff("Prof.", "Sophia", "Patel", "sophia.patel@mail.com", False, "sophiypass", new_admin.id)
+        new_staff = create_staff("Prof.", "Sophia", "Patel", "sophia.patel@mail.com", False, "sophiypass", new_admin.id)
 
-        self.assertIsNotNone(newstaff)
-        self.assertEqual(newstaff.prefix, 'Prof.')
-        self.assertEqual(newstaff.firstname, 'Sophia')
-        self.assertEqual(newstaff.lastname, 'Patel')
-        self.assertEqual(newstaff.email, 'sophia.patel@mail.com')
-        self.assertTrue(check_password_hash(newstaff.password, 'sophiypass'))
-        self.assertFalse(newstaff.is_admin)
+        self.assertIsNotNone(new_staff)
+        self.assertEqual(new_staff.prefix, 'Prof.')
+        self.assertEqual(new_staff.firstname, 'Sophia')
+        self.assertEqual(new_staff.lastname, 'Patel')
+        self.assertEqual(new_staff.email, 'sophia.patel@mail.com')
+        self.assertTrue(check_password_hash(new_staff.password, 'sophiypass'))
+        self.assertFalse(new_staff.is_admin)
+
+        fetched_staff = get_staff(new_staff.id)
+        self.assertIsNotNone(fetched_staff)     #should I check for equality in all fields?
+        
+
+
         
     #INTEGRATION TEST-#4    THIS TEST TESTS THE CREATION/ADDING OF A NEW STUDENT
     def test_integration_04_add_student(self):
@@ -180,9 +189,15 @@ class staffsIntegrationTests(unittest.TestCase):
         self.assertEqual(new_student2.lastname, "Rickson")
         self.assertEqual(new_student2.email, "rick.rickson@mail.com")
 
+        fetched_student1 = get_student(816000001)
+        fetched_student2 = get_student(816000002)
+
+        self.assertIsNotNone(fetched_student1)
+        self.assertIsNotNone(fetched_student2)
+
 
     #INTEGRATION TEST-#5    THIS TEST TESTS THE SEARCH OF AN ADDED STUDENT
-    def test_integration_05_search_student_json(self):
+    def test_integration_05_get_student_json(self):
         new_admin = create_staff("Prof.", "Julian", "Lee", "julian.lee@mail.com", True, "julianpass", None)
         new_student = add_student("816000003","Ethan", "Hall", "ethan.hall@mail.com")
 
