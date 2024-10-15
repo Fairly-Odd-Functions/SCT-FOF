@@ -59,6 +59,9 @@ def add_new_student():
         if not student_id or not firstname or not lastname or not email:
             return jsonify(error="All Fields Are Required To Add Student"), 400
 
+        if student_id[:4] != '8160' or len(student_id) != 9:
+            return jsonify(error="Invalid Student ID, Please Try Again."), 400
+
         new_student = add_student(student_id, firstname, lastname, email)
         if new_student is None:
             return jsonify(error="Failed To Add Student Or Student Already Exists."), 400
