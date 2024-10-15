@@ -82,7 +82,7 @@ def review_student(student_id):
         reviewer_id = jwt_current_user.id
 
         data = request.get_json()
-        text = data.get('text')
+        text = data.get("text")
         rating = data.get("rating")
 
         if not text or not rating:
@@ -94,6 +94,10 @@ def review_student(student_id):
         student = get_student(student_id)
         if not student:
             return jsonify(error=f"Fail To Add Review: Student With ID {student_id} Does Not Exist."), 404
+        
+        new_review = add_review(student_id, text, rating, reviewer_id)
+        if not new_review:
+            return jsonify(error="Failed To Add New Review To Student."), 500
 
         message = f'Review Made By {jwt_current_user.prefix} {jwt_current_user.firstname} {jwt_current_user.lastname} Added Successfully To Student With ID: {student_id}'
         return jsonify(message=message), 201
