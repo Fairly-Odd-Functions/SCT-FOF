@@ -7,6 +7,7 @@ from App.controllers import (
     get_student_json,
     add_student,
     add_review,
+    is_valid_student_id,
     get_student_reviews_json,
     jwt_required
 )
@@ -59,7 +60,7 @@ def add_new_student():
         if not student_id or not firstname or not lastname or not email:
             return jsonify(error="All Fields Are Required To Add Student"), 400
 
-        if student_id[:4] != '8160' or len(student_id) != 9:
+        if not is_valid_student_id(student_id):
             return jsonify(error="Invalid Student ID, Please Try Again."), 400
 
         new_student = add_student(student_id, firstname, lastname, email)
@@ -87,10 +88,13 @@ def review_student(student_id):
         if not text or not rating:
             return jsonify(error="Text And Rating Are Required."), 400
 
-        new_review = add_review(student_id, text, rating, reviewer_id)
-        if not new_review:
-            return jsonify(error="Failed To Add New Review."), 500
-        
+        if not is_valid_student_id(student_id):
+            return jsonify(error="Invalid Student ID, Please Try Again."), 400
+
+        student = get_student(student_id)
+        if not student:
+            return jsonify(error=f"Fail To Add Review: Student With ID {student_id} Does Not Exist."), 404
+
         message = f'Review Made By {jwt_current_user.prefix} {jwt_current_user.firstname} {jwt_current_user.lastname} Added Successfully To Student With ID: {student_id}'
         return jsonify(message=message), 201
 
@@ -103,6 +107,9 @@ def review_student(student_id):
 @jwt_required()
 def search_student(student_id):
     try:
+        if not is_valid_student_id(student_id):
+            return jsonify(error="Invalid Student ID, Please Try Again."), 400
+
         student = get_student_json(student_id)
         if not student:
             return jsonify(error=f'Student With ID: {student_id} Not Found'), 404

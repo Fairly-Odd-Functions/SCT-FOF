@@ -6,7 +6,7 @@ index_views = Blueprint('index_views', __name__, template_folder='../templates')
 """Root"""
 @index_views.route('/', methods=['GET'])
 def index():
-    return '<h1>Student Conduct Tracker - Fairly Odd Functions</h1>'
+    return '<h1>Student Conduct Tracker - Fairly Odd Functions</h1>', 200
 
 """Initialize App"""
 @index_views.route('/init', methods=['GET'])

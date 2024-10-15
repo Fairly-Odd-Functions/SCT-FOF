@@ -42,3 +42,8 @@ def add_student (student_id, firstname, lastname, email):
         print(f"Error While Adding Student: {e}")
         db.session.rollback()
         return None
+
+# Verify Student ID
+def is_valid_student_id(student_id):
+    student_id_str = str(student_id)
+    return student_id_str[:4] == '8160' and len(student_id_str) == 9
