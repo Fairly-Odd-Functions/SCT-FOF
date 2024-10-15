@@ -128,9 +128,12 @@ def search_student(student_id):
 @jwt_required()
 def list_student_reviews(student_id):
     try:
+        if not is_valid_student_id(student_id):
+            return jsonify(error="Invalid Student ID, Please Try Again."), 400
+
         student = get_student(student_id)
         if not student:
-            return jsonify(error=f'Student With ID {student_id} Not Found'), 404
+            return jsonify(error=f'Student With ID: {student_id} Not Found'), 404
 
         student_reviews = get_student_reviews_json(student_id)
         return jsonify(student_reviews), 200 # Extra Support!
