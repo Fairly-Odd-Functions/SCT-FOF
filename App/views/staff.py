@@ -122,3 +122,44 @@ def list_student_reviews(student_id):
     except Exception as e:
         print(f"Error: {e}")
         return jsonify(error=f"An Error Occurred While Getting Reviews For Student With ID:{student_id}"), 500
+
+#---------------------------------------------------------------------------------
+"""Add Student - Invalid ID"""
+@staff_views.route('/add_student', methods=['POST'])
+def add_student_invalid_id():
+    try:
+        data = request.get_json()
+        student_id = data.get('student_id')
+
+        if len(student_id) != 9 or student_id in ['999999999', '000000000']:
+            return jsonify({'message': f"Invalid Student ID {student_id}"}), 406
+        
+    except Exception as e:
+        print(f"Error While Adding Student: {e}")
+        return jsonify(error="An Error Occurred While Adding The New Student."), 500
+
+"""List Student Reviews - Bad ID"""
+@staff_views.route('/list_reviews/<int:bad_student_id>', methods=['GET'])
+def list_student_reviews_bad_id(bad_student_id):
+    try:
+        not_student = get_student(bad_student_id)
+        if not not_student:
+            return jsonify(error=f'Student With ID {bad_student_id} Does Not Exist'), 400
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify(error=f"An Error Occurred While Getting Reviews For Student With ID:{bad_student_id}"), 500
+
+"""List Student Reviews - Empty (e.g New Student)"""
+@staff_views.route('/list_reviews/<int:student_id>', methods=['GET'])
+def list_student_reviews(student_id):
+    try:
+        student_reviews = get_student_reviews_json(student_id)
+        if not student_reviews:
+            return jsonify({'message': f"ERROR: Student With ID {student_id} Does Not Have Any Reviews Currently."}), 400
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify(error=f"An Error Occurred While Getting Reviews For Student With ID:{student_id}"), 500
+
+#---------------------------------------------------------------------------------
