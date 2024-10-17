@@ -132,19 +132,19 @@ def add_student_invalid_id():
         student_id = data.get('student_id')
 
         if len(student_id) != 9 or student_id in ['999999999', '000000000']:
-            return jsonify({'message': f"Invalid Student ID {student_id}"}), 406
+            return jsonify({'message': f"Invalid Student ID, Please Try Again."}), 400
         
     except Exception as e:
         print(f"Error While Adding Student: {e}")
         return jsonify(error="An Error Occurred While Adding The New Student."), 500
 
 """List Student Reviews - Bad ID"""
-@staff_views.route('/list_reviews/<int:bad_student_id>', methods=['GET'])
+@staff_views.route('/list_reviews/<int:student_id>', methods=['GET'])
 def list_student_reviews_bad_id(bad_student_id):
     try:
         not_student = get_student(bad_student_id)
         if not not_student:
-            return jsonify(error=f'Student With ID {bad_student_id} Does Not Exist'), 400
+            return jsonify(error=f'Student With ID: ${bad_student_id} Not Found`'), 404
 
     except Exception as e:
         print(f"Error: {e}")
@@ -161,5 +161,5 @@ def list_student_reviews(student_id):
     except Exception as e:
         print(f"Error: {e}")
         return jsonify(error=f"An Error Occurred While Getting Reviews For Student With ID:{student_id}"), 500
-
+    
 #---------------------------------------------------------------------------------
