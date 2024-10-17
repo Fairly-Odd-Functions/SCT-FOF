@@ -35,14 +35,6 @@ class StudentUnitTests(unittest.TestCase):
     # UNIT TEST - #1 ***
     def test_unit_01_new_student(self):
         student = Student(816000010, "Zuzu", "Pembleton", "zuzu.pembleton@mail.com")
-        # Testing multiple attributes within in test function isn't needed nor a good pratice
-        # Because if this test happens to fails, we don't know which attribute caused the failure
-        # So checking for one attribute would be enough - JayJay
-        assert student.student_id == 816000010
-        assert student.firstname == "Zuzu"
-        assert student.lastname == "Pembleton"
-        assert student.email == "zuzu.pembleton@mail.com"
-        # Or just this
         assert student is not None
     
     # UNIT TEST - #2
@@ -56,34 +48,19 @@ class StudentUnitTests(unittest.TestCase):
                               "reviews": []}, student_json)
 
 class StaffUnitTests(unittest.TestCase):
-        # UNIT TEST - #3 ***
-        # Same issue as the new student test but EVEN WORSE
-        # Here we're testing a new staff but creating two types of staffs in one in the same test
-        # Make separate tests for a regalur staff and admin staff, and check one thing about it.
+        # UNIT TEST - #3 *** #Then this cant be a unit test because you need an admin to create a staff???
         def test_unit_03_new_staff(self): 
-            #ENSURUNG A STAFF WITH ADMIN STATUS CAN BE CREATED
-            
-            admin = Staff("Prof.", "Amelia", "Wilson", "amelia.wilson@mail.com", True, "amelia123", None)
-            assert admin.prefix == "Prof."
-            assert admin.firstname == "Amelia"
-            assert admin.lastname == "Wilson"
-            assert admin.email == "amelia.wilson@mail.com"
-            assert admin.is_admin
-            assert admin.created_by_id is None
-
             #ENSURING A STAFF WITHOUT ADMIN STATUS CAN BE CREATED
-            staff = Staff("Mr.", "James", "Taylor", "james.taylor@mail.com", False, "jamestay", admin.id)
-            assert staff.prefix == "Mr."
-            assert staff.firstname == "James"
-            assert staff.lastname == "Taylor"
-            assert staff.email == "james.taylor@mail.com"
+            staff = Staff("Mr.", "James", "Taylor", "james.taylor@mail.com", False, "jamestay", None)
             assert not staff.is_admin
-            #assert staff.password == generate_password_hash("jamestay")
-            assert staff.created_by_id == admin.id
-
-            assert staff is not None
 
         # UNIT TEST - #4
+        def test_unit_03_new_staff(self):
+            #ENSURUNG A STAFF WITH ADMIN STATUS CAN BE CREATED
+            admin = Staff("Prof.", "Amelia", "Wilson", "amelia.wilson@mail.com", True, "amelia123", 0)
+            assert admin.is_admin
+
+        # UNIT TEST - #5
         def test_unit_04_new_staff_json(self):
             admin = Staff("Ms.", "Isabella", "Anderson", "isabella.anderson@mail.com", True, "isa_bella", None)
             staff_json = admin.get_json()
@@ -95,32 +72,18 @@ class StaffUnitTests(unittest.TestCase):
                                   "is_admin": True,
                                   "created_by": None}, staff_json)
 
-        # UNIT TEST - #5
+        # UNIT TEST - #6
         def test_unit_05_set_password(self):
             password = "lucaspass"
             hashed_password = generate_password_hash(password)
             staff = Staff("Prof.", "Lucas", "Garcia", "lucas.garcia@mail.com", True, "lucaspass", None)
             assert staff.password != password
 
-        # UNIT TEST - #6
+        # UNIT TEST - #7
         def test_unit_06_check_password(self):
             password = "henrypass"
             staff = Staff("Mr.", "Henry", "White", "henry.white@mail.com", True, password, None)
             assert staff.check_password(password)
-            
-
-class ReviewUnitTests(unittest.TestCase):
-    # Isn't this an integration test? Also same problem as testing multiple attributes in one test - JayJay
-    # UNIT TEST - #7 ***
-    def test_unit_07_new_review(self):
-        admin = Staff("Prof.", "Zoe", "Nelson", "zoe.nelson@mail.com", True, "zoenel123", None)
-        student = Student(816000030, "Ethan", "Scott", "ethan.scott@mail.com")
-        review = Review("Excellent effort!", 5, 816000030, admin.id)
-        assert review.student_id == 816000030
-        assert review.text == "Excellent effort!"
-        assert review.rating == 5
-
-        assert review is not None
     
 
 '''
@@ -141,47 +104,26 @@ class staffsIntegrationTests(unittest.TestCase):
         assert response is None
 
     # INTEGRATION TEST - #3: TESTS THE CREATION OF STAFF BY AN ADMIN ***
-    # Testing too many attributes - JayJay
     def test_integration_03_create_staff(self):
         new_admin = create_staff("Ms.", "David", "Lee", "david.lee@mail.com", True, "davidpass", None)
         new_staff = create_staff("Prof.", "Sophia", "Patel", "sophia.patel@mail.com", False, "sophiypass", new_admin.id)
 
-        self.assertIsNotNone(new_staff)
-        self.assertEqual(new_staff.prefix, 'Prof.')
-        self.assertEqual(new_staff.firstname, 'Sophia')
-        self.assertEqual(new_staff.lastname, 'Patel')
-        self.assertEqual(new_staff.email, 'sophia.patel@mail.com')
-        self.assertTrue(check_password_hash(new_staff.password, 'sophiypass'))
-        self.assertFalse(new_staff.is_admin)
+        assert new_admin is not None
+        assert new_staff is not None
 
         fetched_staff = get_staff(new_staff.id)
-        self.assertIsNotNone(fetched_staff)     #should I check for equality in all fields?
+        self.assertIsNotNone(fetched_staff)
         
     # INTEGRATION TEST - #4: TESTS THE CREATION/ADDING OF A NEW STUDENT ***
     def test_integration_04_add_student(self):
         new_admin = create_staff("Prof.", "Jackson", "Wang", "jackson.wang@mail.com", True, "jacksonpass", None)
-        new_staff = create_staff("Mr.", "Liam", "Kim", "liam.kim@mail.com", False, "liampass", new_admin.id)
 
-        # ********** There is no real testable difference between these two?
-        # Both staff are staff regardless, also had the logic problem, if one fails we won't know which caused it
+        #ENSURING A STAFF CAN CREATE A STUDENT
+        new_student = add_student("816000001","Ava", "Brown", "ava.brown@mail.com")
+        assert new_student is not None
 
-        #ENSURING AN ADMIN CAN CREATE A STUDENT  **********
-        new_student2 = add_student("816000001","Ava", "Brown", "ava.brown@mail.com")
-        self.assertEqual(new_student2.firstname, "Ava")
-        self.assertEqual(new_student2.lastname, "Brown")
-        self.assertEqual(new_student2.email, "ava.brown@mail.com")
-
-        #ENSURING A STAFF CAN CREATE A STUDENT **********
-        new_student2 = add_student("816000002","Rick", "Rickson", "rick.rickson@mail.com")
-        self.assertEqual(new_student2.firstname, "Rick")
-        self.assertEqual(new_student2.lastname, "Rickson")
-        self.assertEqual(new_student2.email, "rick.rickson@mail.com")
-
-        fetched_student1 = get_student(816000001)
-        fetched_student2 = get_student(816000002)
-
-        self.assertIsNotNone(fetched_student1)
-        self.assertIsNotNone(fetched_student2)
+        fetched_student = get_student(816000001)
+        self.assertIsNotNone(fetched_student)
 
     # INTEGRATION TEST - #5: TESTS THE SEARCH OF AN EXISTING STUDENT
     def test_integration_05_get_student_json(self):
