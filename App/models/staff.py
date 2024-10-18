@@ -16,7 +16,7 @@ class Staff(db.Model):
     created_by = db.relationship('Staff', remote_side=[id], backref='staff_added', lazy=True)
     reviews = db.relationship('Review', back_populates='reviewer', lazy=True)
 
-    def __init__(self, prefix, firstname, lastname, email, is_admin, password, created_by_id):
+    def __init__(self, prefix, firstname, lastname, email, is_admin, password, created_by_id):        
         self.prefix = prefix
         self.email = email
         self.firstname = firstname

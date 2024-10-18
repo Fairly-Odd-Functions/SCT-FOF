@@ -18,7 +18,7 @@ class Review(db.Model):
       self.student_id = student_id
       self.reviewer_id = reviewer_id
 
-    def get_json(self):
+    def get_json(self): #~adjusted for rating feature
         return{
             'student_id': self.student_id,
             'text': self.text,
@@ -27,4 +27,4 @@ class Review(db.Model):
         }
 
     def __repr__(self):
-       return f"\n<Review: {self.text} \n {self.rating} \n Written By: {self.reviewer.prefix} {self.reviewer.firstname} {self.reviewer.lastname}>\n"
+       return f"\n<Review: {self.text} \n Written By: {self.reviewer.prefix} {self.reviewer.firstname} {self.reviewer.lastname}>\n"

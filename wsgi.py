@@ -128,11 +128,15 @@ def review_student_command(student_id, text, rating, reviewer_id):
     else:
         print(f"ERROR: Student With ID {student_id} Does Not Exist.")
 
-# REQUIREMENT #3 - VIEW STUDENT REVIEWS
+# REQUIREMENT #3 - VIEW STUDENT REVIEWS            Edit: ~allowed for input of student_id if not provided within argument
 @staff_cli.command("view_student_reviews", help="List All Reviews For Specified Student")
-@click.argument("student_id")
+@click.argument("student_id", required=False)
 @click.argument("format", default="string")
 def list_review_command(student_id, format):
+
+    if not student_id:
+        student_id = input("Enter Student ID: ")    
+
     reviews = get_student_reviews(student_id)
     if reviews and format == "string":
         print(get_student_reviews(student_id))
@@ -141,7 +145,7 @@ def list_review_command(student_id, format):
     else:
         print(get_student_reviews_json(student_id))
 
-# REQUIREMENT #4 - SEARCH STUDENT
+# REQUIREMENT #4 - SEARCH STUDENT                  Edit: ~allowed for input of student_id while still keeping default value
 @staff_cli.command("search_student", help="Searches For Specific Student")
 @click.argument("student_id", required=False)
 def search_student_command(student_id):
@@ -170,5 +174,28 @@ def user_tests_command(type):
         sys.exit(pytest.main(["-k", "UserIntegrationTests"]))
     else:
         sys.exit(pytest.main(["-k", "App"]))
+
+@test.command("student", help="Run Student tests")
+@click.argument("type", default="all")
+def user_tests_command(type):
+    
+    if type == "unitStudent":
+        sys.exit(pytest.main(["-k", "StudentUnitTests"]))
+    elif type == "int":
+        sys.exit(pytest.main(["-k", "studentIntegrationTests"]))
+    else:
+        sys.exit(pytest.main(["-k", "App"]))
+
+@test.command("review", help="Run Review tests")
+@click.argument("type", default="all")
+def user_tests_command(type):
+    
+    if type == "unitReview":
+        sys.exit(pytest.main(["-k", "ReviewUnitTests"]))
+    elif type == "int":
+        sys.exit(pytest.main(["-k", "reviewIntegrationTests"]))
+    else:
+        sys.exit(pytest.main(["-k", "App"]))
+
 
 app.cli.add_command(test)

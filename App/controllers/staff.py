@@ -43,7 +43,7 @@ def create_staff(prefix, firstname, lastname, email, is_admin, password, created
 
 # Get Staff
 def get_staff(id):
-    return Staff.query.get(id)
+    return Staff.query.filter_by(id=id).first()
 
 # Get Staff Via Email - Unique Identification
 def get_staff_by_email(email):
