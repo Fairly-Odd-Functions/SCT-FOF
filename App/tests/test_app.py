@@ -10,7 +10,6 @@ from App.controllers import (
     add_review,
     get_student_json,
     get_student_reviews_json,
-    login
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -140,7 +139,7 @@ class StaffsIntegrationTests(unittest.TestCase):
                                "text": "Very Good Student", 
                                "rating": 5, 
                                "reviewer": "Dr. Evelyn Hall"},
-
+                              
                                {"student_id": 816000005,
                                "text": "Very Bad Student", 
                                "rating": 1, 
