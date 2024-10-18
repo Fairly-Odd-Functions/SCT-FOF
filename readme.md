@@ -1,4 +1,5 @@
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/JaleneA/SCT-JaleneA)
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://documenter.getpostman.com/view/33150663/2sAXxWYUFw)
 
 ![Tests](https://github.com/uwidcit/flaskmvc/actions/workflows/dev.yml/badge.svg)
 
@@ -101,6 +102,12 @@ $ flask staff search_student 816031000
 ```bash
 # List All Students
 $ flask staff list_students
+```
+
+## Running The Project
+For development run the serve command (what you execute):
+```bash
+$ flask run
 ```
 
 # Testing
