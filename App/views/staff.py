@@ -20,6 +20,9 @@ staff_views = Blueprint('staff_views', __name__, template_folder='../templates')
 def create_new_staff():
     try:
         current_staff = jwt_current_user
+        if not current_staff.is_admin:
+            return jsonify(error="Not Authorized To Create Staff Members. Admin Staff Only."), 403
+
         data = request.json
         prefix = data['prefix']
         firstname = data['firstname']
