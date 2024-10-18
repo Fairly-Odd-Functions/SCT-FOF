@@ -56,15 +56,6 @@ $ flask admin create_staff
 # List All Staff Accounts
 $ flask admin list_staff 
 ```
-<details>
-<summary>Snippets</summary>
-
-![Screenshot1](./img/createstaff1.png)
-![Screenshot2](./img/createstaff2.png)
-![Screenshot3](./img/liststaff.png)
-
-</details>
-
 
 ### Staff Commands
 ```bash
@@ -112,25 +103,10 @@ $ flask staff search_student 816031000
 $ flask staff list_students
 ```
 
-<details>
-<summary>Snippets</summary>
-
-![Screenshot4](./img/addstudent1.png)
-![Screenshot5](./img/addstudent2.png)
-![Screenshot6](./img/addstudents1.png)
-![Screenshot7](./img/addstudents2.png)
-![Screenshot8](./img/review1.png)
-![Screenshot9](./img/review2.png)
-![Screenshot10](./img/studentreview.png)
-![Screenshot11](./img/search.png)
-![Screenshot12](./img/liststudents.png)
-
-</details>
-
 # Testing
 
 ## Unit & Integration
-A few (7) Unit and Integration tests are created in the App/test.
+A few  Unit(7) and Integration(7) tests are created in the App/test. Located at test_app.py
 You can then execute all user tests as follows:
 
 ```bash
@@ -148,20 +124,13 @@ $ pytest
 # Error Handling
 ✓ Another Staff With The Same Email Cannot Be Created<br>
 ✓ Only Admins Can Create Staff Accounts<br>
-✓ Existing Students Import Via CSV Will Be Ignored Upon Later Imports of The Same CSV (With Newly Added Data)<br>
+✓ All Fields Are Required When Creating A New Staff Member<br>
+✓ Invalid Student ID Will Not Be Accepted<br>
 ✓ Cannot Create Another Student With An Already Existing Student ID<br>
+✓ All Fields Are Required To Add A Student<br>
 ✓ Cannot Review a Student That Doesn't Exist<br>
+✓ Text And Rating Are Required For Student Reviews<br>
 ✓ Cannot Search a Student That Doesn't Exist<br>
-
-
-<details>
-<summary>Snippets</summary>
-
-![Screenshot13](./img/errorhandle1.png)
-![Screenshot14](./img/errorhandle2.png)
-![Screenshot15](./img/errorhandle3.png)
-![Screenshot16](./img/errorhandle4.png)
-![Screenshot17](./img/errorhandle5.png)
-![Screenshot18](./img/errorhandle6.png)
-
-</details>
+✓ Cannot Retrieve Reviews for a Student That Doesn't Exist<br>
+✓ Invalid Student ID Will Not Be Accepted When Searching or Reviewing Students<br>
+✓ General Error Handling For Any Unexpected Issues During Operations (500 Error) <br>
