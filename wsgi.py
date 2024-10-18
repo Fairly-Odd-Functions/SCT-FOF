@@ -12,8 +12,7 @@ from App.controllers import (
     get_student,
     get_student_reviews,
     get_student_reviews_json
-    )
-
+)
 
 app = create_app()
 migrate = get_migrate(app)
@@ -128,7 +127,7 @@ def review_student_command(student_id, text, rating, reviewer_id):
     else:
         print(f"ERROR: Student With ID {student_id} Does Not Exist.")
 
-# REQUIREMENT #3 - VIEW STUDENT REVIEWS            Edit: ~allowed for input of student_id if not provided within argument
+# REQUIREMENT #3 - VIEW STUDENT REVIEWS
 @staff_cli.command("view_student_reviews", help="List All Reviews For Specified Student")
 @click.argument("student_id", required=False)
 @click.argument("format", default="string")
@@ -145,7 +144,7 @@ def list_review_command(student_id, format):
     else:
         print(get_student_reviews_json(student_id))
 
-# REQUIREMENT #4 - SEARCH STUDENT                  Edit: ~allowed for input of student_id while still keeping default value
+# REQUIREMENT #4 - SEARCH STUDENT
 @staff_cli.command("search_student", help="Searches For Specific Student")
 @click.argument("student_id", required=False)
 def search_student_command(student_id):
@@ -162,16 +161,15 @@ app.cli.add_command(staff_cli)
 '''
 Test Commands
 '''
-
 test = AppGroup('test', help='Testing Commands') 
 
-@test.command("staff", help="Run Staff tests")
+@test.command("staff", help="Run Staff Tests")
 @click.argument("type", default="all")
 def user_tests_command(type):
     if type == "unit":
-        sys.exit(pytest.main(["-k", "UserUnitTests"]))
+        sys.exit(pytest.main(["-k", "StaffUnitTests"]))
     elif type == "int":
-        sys.exit(pytest.main(["-k", "UserIntegrationTests"]))
+        sys.exit(pytest.main(["-k", "StaffIntegrationTests"]))
     else:
         sys.exit(pytest.main(["-k", "App"]))
 
@@ -179,23 +177,9 @@ def user_tests_command(type):
 @click.argument("type", default="all")
 def user_tests_command(type):
     
-    if type == "unitStudent":
+    if type == "unit":
         sys.exit(pytest.main(["-k", "StudentUnitTests"]))
-    elif type == "int":
-        sys.exit(pytest.main(["-k", "studentIntegrationTests"]))
     else:
         sys.exit(pytest.main(["-k", "App"]))
-
-@test.command("review", help="Run Review tests")
-@click.argument("type", default="all")
-def user_tests_command(type):
-    
-    if type == "unitReview":
-        sys.exit(pytest.main(["-k", "ReviewUnitTests"]))
-    elif type == "int":
-        sys.exit(pytest.main(["-k", "reviewIntegrationTests"]))
-    else:
-        sys.exit(pytest.main(["-k", "App"]))
-
 
 app.cli.add_command(test)

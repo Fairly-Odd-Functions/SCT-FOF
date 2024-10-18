@@ -82,7 +82,7 @@ class StaffUnitTests(unittest.TestCase):
 '''
     Integration Tests
 '''
-class StaffsIntegrationTests(unittest.TestCase):
+class StaffIntegrationTests(unittest.TestCase):
 
     # INTEGRATION TEST - #1: TESTS THE AUTHENTICATION SUCCESS
     def test_integration_01_authenticate_staff_valid(self):

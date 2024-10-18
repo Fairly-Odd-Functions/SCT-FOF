@@ -53,11 +53,6 @@ $ flask admin create_staff Mrs. Bubble Bub bubble.bub@staff.com N bubblepass 1
 $ flask admin create_staff 
 ```
 
-```bash
-# List All Staff Accounts
-$ flask admin list_staff 
-```
-
 ### Staff Commands
 ```bash
 # Adding a Student Record (inline)
@@ -67,16 +62,6 @@ $ flask staff add_student 816031000 Bobby Butterbeard bobby.butterbread@mail.com
 ```bash
 # Adding a Student Record (interactive input)
 $ flask staff add_student
-```
-
-```bash
-# Adding Multiple Student Records (inline)
-$ flask staff add_students students.csv
-```
-
-```bash
-# Adding Multiple Student Records (interactive input)
-$ flask staff add_students
 ```
 
 ```bash
@@ -90,18 +75,23 @@ $ flask staff review
 ```
 
 ```bash
-# Viewing Student Reviews (inline only)
+# Viewing Student Reviews (inline)
 $ flask staff view_student_reviews 816031000
 ```
 
 ```bash
-# Search Student (inline only)
+# Viewing Student Reviews (interactive input)
+$ flask staff view_student_reviews
+```
+
+```bash
+# Search Student (inline)
 $ flask staff search_student 816031000
 ```
 
 ```bash
-# List All Students
-$ flask staff list_students
+# Search Student (interactive input)
+$ flask staff search_student
 ```
 
 ## Running The Project
@@ -113,19 +103,30 @@ $ flask run
 # Testing
 
 ## Unit & Integration
-A few  Unit(7) and Integration(7) tests are created in the App/test. Located at test_app.py
-You can then execute all user tests as follows:
-
-```bash
-$ flask test staff
-```
-
-![Screenshot13](./img/test.png)
-
-or run all application tests with the following command:
+A total of fourteen (14) tests - 7 Unit and 7 Integration are created in the App/test. Located at test_app.py
+You can then execute all all application as follows:
 
 ```bash
 $ pytest
+```
+
+![Screenshot1](./img/test.png)
+
+or run perform specific tests with the following convention:
+
+```bash
+# Run all Student Unit Tests
+$ flask test student unit
+```
+
+```bash
+# Run all Staff Unit Tests
+$ flask test staff unit
+```
+
+```bash
+# Run all Staff Integration Tests
+$ flask test staff int
 ```
 
 # Error Handling
