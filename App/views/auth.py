@@ -7,22 +7,9 @@ from App.controllers import (
 
 auth_views = Blueprint('auth_views', __name__, template_folder='../templates')
 
-'''
-Page/Action Routes
-'''    
-@auth_views.route('/users', methods=['GET'])
-def get_user_page():
-    users = get_all_users() # type: ignore
-    return render_template('users.html', users=users)
-
-@auth_views.route('/identify', methods=['GET'])
-@jwt_required()
-def identify_page():
-    return render_template('message.html', title="Identify", message=f"You are logged in as {current_user.id} - {current_user.username}")
-
 """Login"""
 @auth_views.route('/login', methods=['POST'])
-def login():
+def login_action():
     try:
         data = request.get_json()
         
@@ -32,7 +19,7 @@ def login():
         token = login(data['email'], data['password'])
 
         if not token:
-            return jsonify({"error": "Bad email or password given"}), 401
+            return jsonify({"error": "Bad Email Or Password Given"}), 401
 
         return jsonify(access_token=token), 200
 
